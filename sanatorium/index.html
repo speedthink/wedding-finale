@@ -6,15 +6,15 @@
 <title>春山疗养院 - 档案</title>
 <style>
   :root {
-    --paper-official: #d5cebc;
-    --paper-staff: #d9d1bd;
-    --paper-security: #d6cdb8;
-    --paper-diary: #ddd5c2;
-    --paper-emergency: #d8d0bb;
-    --text: #1a1410;
-    --red: #6b1010;
-    --ink: #0f0c08;
-    --border: #9b8b70;
+    --paper-official: #b8ad9a;
+    --paper-staff: #bcb29e;
+    --paper-security: #b8ae98;
+    --paper-diary: #c0b6a2;
+    --paper-emergency: #bbb19b;
+    --text: #0f0c08;
+    --red: #5a0a0a;
+    --ink: #080604;
+    --border: #7a6e58;
     --bg-dark: #141211;
   }
 
@@ -79,9 +79,9 @@
   .dossier-cover {
     text-align: center;
     padding: 48px 40px;
-    background: linear-gradient(180deg, #d9d2c0 0%, #cfc7b2 100%);
+    background: linear-gradient(180deg, #b9af9c 0%, #afa590 100%);
     border: 1px solid var(--border);
-    box-shadow: 0 4px 40px rgba(0,0,0,0.5), 0 0 80px rgba(120,20,20,0.08);
+    box-shadow: 0 4px 40px rgba(0,0,0,0.6), 0 0 80px rgba(120,20,20,0.1);
     position: relative;
     transition: box-shadow 0.8s;
   }
@@ -153,10 +153,10 @@
   }
   .doc-card > * { position: relative; z-index: 1; }
 
-  .doc-staff { background: linear-gradient(180deg, #dcd5c0 0%, #d4ccb5 50%, #dbd4be 100%); }
-  .doc-security { background: linear-gradient(180deg, #d8d0b9 0%, #d0c7ae 50%, #d6ceb6 100%); }
-  .doc-diary { background: linear-gradient(180deg, #e0d9c6 0%, #d9d1bb 50%, #ded7c3 100%); }
-  .doc-emergency { background: linear-gradient(180deg, #dbd3bd 0%, #d6ceb6 50%, #dad2bc 100%); border: 2px dashed rgba(139,26,26,0.25); }
+  .doc-staff { background: linear-gradient(180deg, #bcb29e 0%, #b4a894 50%, #bab09c 100%); }
+  .doc-security { background: linear-gradient(180deg, #b8ae98 0%, #b0a590 50%, #b6ac96 100%); }
+  .doc-diary { background: linear-gradient(180deg, #c0b6a2 0%, #b9af99 50%, #beb4a0 100%); }
+  .doc-emergency { background: linear-gradient(180deg, #bbb19b 0%, #b6ac96 50%, #bab09a 100%); border: 2px dashed rgba(139,26,26,0.25); }
 
   .doc-header {
     text-align: center;
@@ -295,14 +295,14 @@
 
   /* ── 手写便签 ── */
   .note-card {
-    background: linear-gradient(135deg, #e8dfc8 0%, #e2d8be 100%);
-    border: 1px solid #b8a880;
+    background: linear-gradient(135deg, #c8bea8 0%, #c2b7a0 100%);
+    border: 1px solid #9a8c70;
     padding: 24px 26px;
     margin: 22px 0;
     font-size: 14px;
     line-height: 2.2;
-    color: #2a1a08;
-    box-shadow: 2px 3px 14px rgba(0,0,0,0.2);
+    color: #1a1008;
+    box-shadow: 2px 3px 14px rgba(0,0,0,0.35);
     position: relative;
     letter-spacing: 0.5px;
   }
@@ -567,11 +567,11 @@
   .paper-slip {
     position: relative;
     margin: 20px 0 20px 20px;
-    width: 180px;
-    height: 120px;
-    background: linear-gradient(135deg, #f5edcc 0%, #efe4b8 100%);
-    border: 1px solid #c4b078;
-    box-shadow: 3px 4px 16px rgba(0,0,0,0.3);
+    width: 260px;
+    height: 150px;
+    background: linear-gradient(135deg, #e8debe 0%, #e2d6b0 100%);
+    border: 1px solid #b8a270;
+    box-shadow: 3px 4px 20px rgba(0,0,0,0.4);
     cursor: pointer;
     transform: rotate(-3deg);
     transition: all 0.5s;
@@ -579,10 +579,11 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    font-size: 12px;
-    color: #5a3a1a;
+    font-size: 14px;
+    color: #4a2a10;
     letter-spacing: 2px;
     animation: slipGlow 4s ease-in-out infinite;
+    user-select: none;
   }
   .paper-slip::before {
     content: '';
@@ -597,11 +598,12 @@
   }
   .paper-slip:hover {
     transform: rotate(0deg) scale(1.05);
-    box-shadow: 4px 6px 24px rgba(0,0,0,0.4), 0 0 30px rgba(200,160,60,0.15);
+    box-shadow: 6px 8px 32px rgba(0,0,0,0.5), 0 0 40px rgba(200,160,60,0.2);
+    background: linear-gradient(135deg, #efe5c8 0%, #e8dcb8 100%);
   }
   @keyframes slipGlow {
-    0%, 100% { box-shadow: 3px 4px 16px rgba(0,0,0,0.3); }
-    50% { box-shadow: 3px 4px 20px rgba(0,0,0,0.35), 0 0 15px rgba(180,140,60,0.1); }
+    0%, 100% { box-shadow: 3px 4px 20px rgba(0,0,0,0.4); }
+    50% { box-shadow: 3px 4px 26px rgba(0,0,0,0.5), 0 0 20px rgba(180,140,60,0.12); }
   }
   .paper-slip .slip-label {
     text-align: center;
@@ -621,20 +623,20 @@
 
   /* 纸条展开状态 */
   .paper-slip.unfolded {
-    width: 340px;
+    width: 460px;
     height: auto;
-    min-height: 200px;
-    padding: 24px 22px;
+    min-height: 220px;
+    padding: 28px 24px;
     transform: rotate(0deg);
     cursor: default;
     animation: none;
     display: block;
     text-align: left;
-    font-size: 13px;
-    line-height: 2.2;
-    color: #2a1808;
+    font-size: 14px;
+    line-height: 2.3;
+    color: #1f1008;
     letter-spacing: 0.5px;
-    box-shadow: 4px 6px 30px rgba(0,0,0,0.5);
+    box-shadow: 6px 8px 36px rgba(0,0,0,0.6);
   }
   .paper-slip.unfolded::before { display: none; }
   .paper-slip.unfolded .slip-label { display: none; }
@@ -655,12 +657,12 @@
     position: fixed;
     pointer-events: auto;
     z-index: 5000;
-    width: 120px;
-    height: 160px;
-    border: 6px solid #5a4030;
-    border-radius: 4px;
-    background: radial-gradient(ellipse at center, rgba(40,50,60,0.95) 0%, rgba(20,25,30,0.98) 100%);
-    box-shadow: 0 0 30px rgba(0,0,0,0.5), inset 0 0 30px rgba(0,0,0,0.4);
+    width: 160px;
+    height: 220px;
+    border: 8px solid #4a3020;
+    border-radius: 6px;
+    background: radial-gradient(ellipse at center, rgba(30,40,50,0.95) 0%, rgba(15,20,25,0.98) 100%);
+    box-shadow: 0 0 40px rgba(0,0,0,0.6), inset 0 0 40px rgba(0,0,0,0.5);
     opacity: 0;
     transition: opacity 0.8s;
     cursor: pointer;
@@ -699,21 +701,22 @@
     flex-wrap: wrap;
   }
   .door-icon {
-    width: 56px;
-    height: 90px;
-    background: linear-gradient(180deg, #5a4a3a 0%, #3a2a1a 100%);
-    border: 2px solid #4a3a2a;
-    border-radius: 4px 4px 0 0;
+    width: 80px;
+    height: 130px;
+    background: linear-gradient(180deg, #4a3a2a 0%, #2a1a10 100%);
+    border: 3px solid #3a2a1a;
+    border-radius: 6px 6px 0 0;
     cursor: pointer;
     position: relative;
     transition: all 0.3s;
-    box-shadow: 0 3px 12px rgba(0,0,0,0.4);
+    box-shadow: 0 4px 16px rgba(0,0,0,0.5);
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 18px;
+    font-size: 22px;
     color: rgba(200,180,140,0.35);
     letter-spacing: 2px;
+    user-select: none;
   }
   .door-icon::after {
     content: '';
@@ -727,10 +730,11 @@
     transform: translateY(-50%);
   }
   .door-icon:hover {
-    background: linear-gradient(180deg, #6b5a4a 0%, #4a3a2a 100%);
+    background: linear-gradient(180deg, #5a4a3a 0%, #3a2a1a 100%);
     border-color: #8b6a3a;
-    color: rgba(220,200,160,0.6);
-    box-shadow: 0 3px 20px rgba(0,0,0,0.5), 0 0 15px rgba(139,80,20,0.2);
+    color: rgba(240,220,180,0.7);
+    box-shadow: 0 4px 24px rgba(0,0,0,0.6), 0 0 20px rgba(139,80,20,0.25);
+    transform: scale(1.05);
   }
   .door-icon.opened {
     background: #0a0a0a;
@@ -739,6 +743,7 @@
     box-shadow: 0 0 20px rgba(139,26,26,0.2);
     cursor: default;
     pointer-events: none;
+    transform: scale(1);
   }
   .door-icon.escape {
     background: #1a2a1a;
@@ -809,10 +814,10 @@
     .note-card { padding: 18px 16px; }
     .hidden-page { padding: 30px 20px; }
     .shadow-figure { display: none; }
-    .paper-slip { width: 140px; height: 100px; }
-    .paper-slip.unfolded { width: 90%; }
-    .door-icon { width: 40px; height: 68px; font-size: 14px; }
-    .mirror-apparition { width: 80px; height: 110px; }
+    .paper-slip { width: 180px; height: 120px; }
+    .paper-slip.unfolded { width: 95%; }
+    .door-icon { width: 50px; height: 80px; font-size: 16px; }
+    .mirror-apparition { width: 100px; height: 140px; }
   }
 </style>
 </head>
@@ -966,7 +971,7 @@
 
     <!-- 陈伯的纸条 - 交互元素 -->
     <div style="text-align:center;">
-      <div class="paper-slip" id="chen-note" onclick="unfoldChenNote()">
+      <div class="paper-slip" id="chen-note">>
         <div class="slip-label">
           <div class="slip-from">—— 陈伯的纸条 ——</div>
           <div class="slip-hint">点击打开</div>
@@ -1027,7 +1032,7 @@
 
     <!-- 前主管的隐藏便签 -->
     <div style="text-align:center; margin-top:16px;">
-      <div class="paper-slip" id="ex-chief-slip" onclick="unfoldExChiefNote()" style="transform:rotate(2deg);">
+      <div class="paper-slip" id="ex-chief-slip" style="transform:rotate(2deg);">
         <div class="slip-label">
           <div class="slip-from">—— 夹在备忘录中的便签 ——</div>
           <div class="slip-hint">点击打开</div>
@@ -1069,7 +1074,7 @@
       护士在说谎。或者——护士根本不知道408里有什么。我不知道哪种情况更可怕。</p>
 
       <!-- 408敲门交互 -->
-      <div style="text-align:center; margin:12px 0; cursor:pointer; user-select:none;" id="knock-trigger" onclick="triggerKnock()">
+      <div style="text-align:center; margin:12px 0; padding:12px; cursor:pointer; user-select:none; font-size:15px;" id="knock-trigger">
         <span style="font-size:11px; color:rgba(139,26,26,0.25); letter-spacing:2px; transition:color 0.5s;" id="knock-hint">▎ 叩、叩、叩 —— 你听到墙那边的敲击声了吗？（点击回应）</span>
       </div>
 
@@ -1138,13 +1143,13 @@
   <div style="text-align:center; padding:20px 0;">
     <p style="font-size:13px; color:rgba(180,40,40,0.25); letter-spacing:3px; margin-bottom:16px;">▎ 你站在走廊里。面前是七扇门。选择一扇打开。</p>
     <div class="doors-row" id="seven-doors">
-      <div class="door-icon" data-door="1" onclick="openDoor(1, this)">一</div>
-      <div class="door-icon" data-door="2" onclick="openDoor(2, this)">二</div>
-      <div class="door-icon" data-door="3" onclick="openDoor(3, this)">三</div>
-      <div class="door-icon" data-door="4" onclick="openDoor(4, this)">四</div>
-      <div class="door-icon" data-door="5" onclick="openDoor(5, this)">五</div>
-      <div class="door-icon" data-door="6" onclick="openDoor(6, this)">六</div>
-      <div class="door-icon" data-door="7" onclick="openDoor(7, this)">七</div>
+      <div class="door-icon" data-door="1">一</div>
+      <div class="door-icon" data-door="2">二</div>
+      <div class="door-icon" data-door="3">三</div>
+      <div class="door-icon" data-door="4">四</div>
+      <div class="door-icon" data-door="5">五</div>
+      <div class="door-icon" data-door="6">六</div>
+      <div class="door-icon" data-door="7">七</div>
     </div>
     <p style="font-size:10px; color:rgba(139,26,26,0.15); letter-spacing:2px; margin-top:12px;" id="door-result"></p>
   </div>
@@ -1159,7 +1164,7 @@
       <div class="doc-stamp">（患者手册最后一页 · 仅在需要时显现文字）</div>
     </div>
 
-    <div class="hidden-page" id="hidden-content" onclick="revealLastPage()">
+    <div class="hidden-page" id="hidden-content">
       <div class="hidden-title">以下为应急措施</div>
 
       <div class="hidden-text">
@@ -1504,7 +1509,7 @@
   // ═══════════════════════════════════════
   //  交互：最后一页 —— 悬停显现 + 点击永久显示
   // ═══════════════════════════════════════
-  window.revealLastPage = function() {
+  function revealLastPage() {
     var page = document.getElementById('hidden-content');
     if (!page || state.lastPageRevealed) return;
     page.classList.add('revealed');
@@ -1512,11 +1517,12 @@
     triggerGlitch();
     document.querySelectorAll('.doc-separator').forEach(function(s) { s.classList.add('dread'); });
     showToast('应急措施已永久显现');
-  };
+  }
 
   // IntersectionObserver —— 滚动到附近时提示
   var hiddenPage = document.getElementById('hidden-content');
   if (hiddenPage) {
+    hiddenPage.addEventListener('click', revealLastPage);
     var observer = new IntersectionObserver(function(entries) {
       entries.forEach(function(entry) {
         if (entry.isIntersecting && !state.lastPageRevealed) {
@@ -1530,43 +1536,47 @@
   // ═══════════════════════════════════════
   //  交互：陈伯的纸条
   // ═══════════════════════════════════════
-  window.unfoldChenNote = function() {
+  function unfoldChenNote() {
     var note = document.getElementById('chen-note');
     if (!note || note.classList.contains('unfolded')) return;
     note.classList.add('unfolded');
     state.chenNoteRead = true;
     triggerGlitch();
     showToast('你打开了陈伯的纸条 —— 里面是逃离的方法');
-    // 更新阅读提示
     var tip = document.getElementById('interaction-tip');
     if (tip) tip.textContent = '陈伯的纸条揭示了关键信息：厨房冰柜后面有维修通道';
     setTimeout(function() {
       if (tip) tip.textContent = '按 F 键可以开关手电筒  ·  寻找更多纸条';
     }, 5000);
-  };
+  }
+
+  var chenNote = document.getElementById('chen-note');
+  if (chenNote) { chenNote.addEventListener('click', unfoldChenNote); }
 
   // ═══════════════════════════════════════
   //  交互：前安保主管的便签
   // ═══════════════════════════════════════
-  window.unfoldExChiefNote = function() {
+  function unfoldExChiefNote() {
     var note = document.getElementById('ex-chief-slip');
     if (!note || note.classList.contains('unfolded')) return;
     note.classList.add('unfolded');
     state.exChiefNoteRead = true;
     triggerGlitch();
     showToast('你打开了夹在备忘录中的便签 —— 前主管的最后警告');
-  };
+  }
+
+  var exChiefSlip = document.getElementById('ex-chief-slip');
+  if (exChiefSlip) { exChiefSlip.addEventListener('click', unfoldExChiefNote); }
 
   // ═══════════════════════════════════════
   //  交互：408敲门
   // ═══════════════════════════════════════
   var knockCount = 0;
-  window.triggerKnock = function() {
+  function triggerKnock() {
     knockCount++;
     var hint = document.getElementById('knock-hint');
     var knockTrigger = document.getElementById('knock-trigger');
 
-    // 创建敲门视觉效果
     for (var i = 0; i < 3; i++) {
       (function(delay) {
         setTimeout(function() {
@@ -1594,7 +1604,6 @@
         hint.style.color = 'rgba(180,40,40,0.7)';
       }
       triggerGlitch();
-      // 触发低语
       setTimeout(function() {
         whisperOverlay.textContent = '你为什么要敲回去？';
         whisperOverlay.style.left = '45%';
@@ -1610,7 +1619,10 @@
       }
       if (knockTrigger) knockTrigger.style.pointerEvents = 'none';
     }
-  };
+  }
+
+  var knockTrigger = document.getElementById('knock-trigger');
+  if (knockTrigger) { knockTrigger.addEventListener('click', triggerKnock); }
 
   // ═══════════════════════════════════════
   //  交互：七扇门抉择
@@ -1625,7 +1637,7 @@
     7: '门后是——正门大厅。阳光。前台的工作人员抬头看了你一眼。她没有问你去哪了。她只是微笑。你可以走出去。但你真的确定你是你自己吗？'
   };
 
-  window.openDoor = function(doorNum, el) {
+  function openDoor(doorNum, el) {
     if (state.doorOpened) return;
     if (!el || el.classList.contains('opened')) return;
 
@@ -1637,33 +1649,37 @@
     if (resultEl) {
       resultEl.textContent = msg;
       resultEl.style.color = 'rgba(180,40,40,0.5)';
-      resultEl.style.fontSize = '13px';
+      resultEl.style.fontSize = '14px';
       resultEl.style.transition = 'color 1s';
     }
 
-    // 第四扇门是"逃生"门（引用"后四扇门中有一扇通向外界"——第四扇是后四扇的第一扇）
     if (doorNum === 4) {
-      if (resultEl) resultEl.style.color = 'rgba(120,160,120,0.6)';
+      if (resultEl) resultEl.style.color = 'rgba(120,180,120,0.6)';
       el.classList.add('escape');
       triggerGlitch();
       showToast('你找到了通往外界的门。但这是真的吗？');
     }
 
     if (doorNum === 6) {
-      // 408房间
       triggerGlitch();
       setTimeout(function() { triggerGlitch(); }, 400);
       document.body.classList.add('page-shake');
       setTimeout(function() { document.body.classList.remove('page-shake'); }, 300);
     }
 
-    // 其他门变灰
     setTimeout(function() {
       document.querySelectorAll('.door-icon').forEach(function(d) {
         if (d !== el) d.classList.add('opened');
       });
     }, 300);
-  };
+  }
+
+  document.querySelectorAll('.door-icon').forEach(function(door) {
+    door.addEventListener('click', function() {
+      var doorNum = parseInt(door.getAttribute('data-door'));
+      openDoor(doorNum, door);
+    });
+  });
 
   // ═══════════════════════════════════════
   //  交互：镜子闪现
