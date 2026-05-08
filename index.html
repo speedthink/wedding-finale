@@ -14,18 +14,73 @@
     --highlight: #f5ebe0;
     --daisy-white: #fafaf7;
     --gold: #d4a853;
+    --soft-pink: #f7ede4;
+    --warm-cream: #fefaf5;
   }
 
   * { margin: 0; padding: 0; box-sizing: border-box; }
 
   body {
     font-family: "Noto Serif SC", "Source Han Serif SC", "STSong", "SimSun", "Songti SC", serif;
-    background: var(--bg);
+    background: radial-gradient(ellipse at 50% 20%, #fefbf6 0%, #fdf6ed 40%, #faf2e6 70%, #f5ebe0 100%);
+    background-attachment: fixed;
     color: var(--text);
     line-height: 2;
     font-size: 17px;
     overflow-x: hidden;
     position: relative;
+    min-height: 100vh;
+  }
+
+  /* ---- 背景纹理 ---- */
+  body::before {
+    content: "";
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    pointer-events: none;
+    z-index: 0;
+    background:
+      radial-gradient(circle at 8% 15%, rgba(212,168,83,0.04) 0%, transparent 50%),
+      radial-gradient(circle at 92% 25%, rgba(196,127,90,0.04) 0%, transparent 50%),
+      radial-gradient(circle at 15% 75%, rgba(196,127,90,0.03) 0%, transparent 50%),
+      radial-gradient(circle at 85% 85%, rgba(212,168,83,0.04) 0%, transparent 50%),
+      radial-gradient(circle at 50% 50%, rgba(245,235,224,0.15) 0%, transparent 70%);
+  }
+
+  /* ---- 左侧雏菊花藤 ---- */
+  .side-daisies-left,
+  .side-daisies-right {
+    position: fixed;
+    top: 0;
+    pointer-events: none;
+    z-index: 0;
+    width: 60px;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-around;
+    font-size: 1.2em;
+    opacity: 0.35;
+    user-select: none;
+  }
+  .side-daisies-left  { left: 12px; }
+  .side-daisies-right { right: 12px; }
+  .side-daisies-left .sd,
+  .side-daisies-right .sd {
+    animation: gentleBob 5s ease-in-out infinite;
+    color: var(--accent);
+    filter: blur(0.3px);
+  }
+  .side-daisies-left .sd:nth-child(odd),
+  .side-daisies-right .sd:nth-child(even) { animation-delay: 1.5s; }
+  .side-daisies-left .sd:nth-child(3n),
+  .side-daisies-right .sd:nth-child(3n) { animation-delay: 3s; color: var(--gold); }
+
+  @keyframes gentleBob {
+    0%, 100% { transform: translateY(0) rotate(0deg); }
+    33% { transform: translateY(-4px) rotate(5deg); }
+    66% { transform: translateY(3px) rotate(-3deg); }
   }
 
   /* ---- 飘落的花瓣 ---- */
@@ -36,12 +91,12 @@
     animation: petalFall linear forwards;
   }
   @keyframes petalFall {
-    0% { transform: translateY(-10vh) rotate(0deg) translateX(0); opacity: 0.85; }
-    60% { opacity: 0.6; }
+    0% { transform: translateY(-10vh) rotate(0deg) translateX(0); opacity: 0.8; }
+    60% { opacity: 0.5; }
     100% { transform: translateY(110vh) rotate(720deg) translateX(var(--drift)); opacity: 0; }
   }
 
-  /* ---- 飘浮的气球（稀有） ---- */
+  /* ---- 飘浮的气球 ---- */
   .balloon {
     position: fixed;
     pointer-events: none;
@@ -49,18 +104,48 @@
     animation: balloonRise linear forwards;
   }
   @keyframes balloonRise {
-    0% { transform: translateY(0) translateX(0); opacity: 0.7; }
+    0% { transform: translateY(0) translateX(0); opacity: 0.55; }
     100% { transform: translateY(-120vh) translateX(var(--bdrift)); opacity: 0; }
+  }
+
+  /* ---- 微光粒子 ---- */
+  .sparkle {
+    position: fixed;
+    pointer-events: none;
+    z-index: 998;
+    width: 2px;
+    height: 2px;
+    border-radius: 50%;
+    background: var(--gold);
+    animation: sparkleGlow 4s ease-in-out infinite;
+    opacity: 0;
+  }
+  @keyframes sparkleGlow {
+    0%, 100% { opacity: 0; transform: translateY(0); }
+    30% { opacity: 0.7; }
+    50% { opacity: 0.3; transform: translateY(-10px); }
+    80% { opacity: 0.8; }
   }
 
   /* ---- 主容器 ---- */
   .container {
-    max-width: 760px;
+    max-width: 740px;
     margin: 0 auto;
-    padding: 80px 48px 60px;
+    padding: 80px 52px 60px;
     position: relative;
     z-index: 1;
-    background: rgba(253,248,242,0.88);
+    background: linear-gradient(180deg,
+      rgba(254,251,246,0.92) 0%,
+      rgba(253,246,237,0.94) 15%,
+      rgba(254,250,245,0.90) 30%,
+      rgba(253,246,237,0.93) 50%,
+      rgba(254,250,245,0.91) 70%,
+      rgba(253,246,237,0.94) 85%,
+      rgba(254,251,246,0.92) 100%
+    );
+    box-shadow: 0 0 80px rgba(196,127,90,0.04), 0 0 200px rgba(212,168,83,0.03);
+    border-left: 1px solid rgba(232,213,196,0.4);
+    border-right: 1px solid rgba(232,213,196,0.4);
   }
 
   /* ---- 标题区 ---- */
@@ -70,6 +155,8 @@
     border-bottom: 1px solid var(--divider);
     margin-bottom: 48px;
     position: relative;
+    background: linear-gradient(180deg, rgba(254,250,245,0) 0%, rgba(245,235,224,0.3) 100%);
+    border-radius: 8px;
   }
   .title-block::after {
     content: "✿";
@@ -77,7 +164,7 @@
     bottom: -14px;
     left: 50%;
     transform: translateX(-50%);
-    background: var(--bg);
+    background: var(--warm-cream);
     padding: 0 16px;
     color: var(--accent);
     font-size: 1.2em;
@@ -104,6 +191,70 @@
     text-indent: 0;
   }
 
+  /* ---- 场景高亮：雏菊花田回忆 ---- */
+  .scene-flashback {
+    margin: 40px 0;
+    padding: 36px 32px;
+    background: linear-gradient(135deg, #fefbf5 0%, #fdf4e8 30%, #fef9f2 60%, #fdf3e5 100%);
+    border-radius: 12px;
+    border: 1px solid rgba(232,213,196,0.5);
+    position: relative;
+    box-shadow: 0 2px 24px rgba(196,127,90,0.06);
+  }
+  .scene-flashback::before {
+    content: "✿ 雏菊花田 · 十七岁的初见 ✿";
+    display: block;
+    text-align: center;
+    font-size: 0.8em;
+    color: var(--accent);
+    letter-spacing: .15em;
+    margin-bottom: 24px;
+    opacity: 0.7;
+  }
+
+  /* ---- 场景高亮：烟花棱晶 ---- */
+  .scene-firework {
+    margin: 40px 0;
+    padding: 36px 32px;
+    background: linear-gradient(180deg, #f9f5f4 0%, #fdf7f0 20%, #fef9f5 50%, #fdf5ec 80%, #faf4f0 100%);
+    border-radius: 12px;
+    border: 1px solid rgba(200,180,160,0.4);
+    position: relative;
+    box-shadow: 0 2px 24px rgba(180,150,120,0.06);
+  }
+  .scene-firework::before {
+    content: "✦ 棱晶烟花 · 银河揉碎的时刻 ✦";
+    display: block;
+    text-align: center;
+    font-size: 0.8em;
+    color: var(--gold);
+    letter-spacing: .15em;
+    margin-bottom: 24px;
+    opacity: 0.7;
+  }
+
+  /* ---- 场景高亮：接吻与誓词 ---- */
+  .scene-vows {
+    margin: 40px 0;
+    padding: 36px 32px;
+    background: linear-gradient(135deg, #fef9f4 0%, #fdf3e7 25%, #fefaf6 50%, #fdf4e9 75%, #fef9f3 100%);
+    border-radius: 12px;
+    border: 1px solid rgba(220,190,160,0.45);
+    position: relative;
+    box-shadow: 0 2px 24px rgba(196,127,90,0.07);
+  }
+
+  /* ---- 场景高亮：观景台结尾 ---- */
+  .scene-ending {
+    margin: 40px 0;
+    padding: 40px 32px;
+    background: linear-gradient(180deg, #fefaf5 0%, #fdf5ea 30%, #fef8f3 60%, #fdf4e6 100%);
+    border-radius: 12px;
+    border: 1px solid rgba(232,213,196,0.5);
+    position: relative;
+    box-shadow: 0 2px 20px rgba(196,127,90,0.05);
+  }
+
   /* ---- 章节分隔符 ---- */
   .section-break {
     text-align: center;
@@ -112,7 +263,7 @@
     font-size: 0.95em;
     letter-spacing: .5em;
     user-select: none;
-    opacity: 0.65;
+    opacity: 0.6;
     position: relative;
   }
   .section-break::before,
@@ -121,9 +272,31 @@
     display: inline-block;
     width: 50px;
     height: 1px;
-    background: var(--divider);
+    background: linear-gradient(90deg, transparent, var(--divider), transparent);
     vertical-align: middle;
     margin: 0 16px;
+  }
+
+  /* ---- "我愿意" 高亮 ---- */
+  .vows-highlight {
+    text-align: center;
+    font-size: 1.15em;
+    font-weight: 600;
+    letter-spacing: .1em;
+    color: var(--accent);
+    margin: 12px 0;
+    text-indent: 0;
+  }
+
+  /* ---- 结尾六字 ---- */
+  .ending-line {
+    text-align: center;
+    font-size: 1.1em;
+    letter-spacing: .15em;
+    color: var(--text);
+    margin: 16px 0;
+    text-indent: 0;
+    font-weight: 600;
   }
 
   /* ---- 页脚 ---- */
@@ -142,7 +315,7 @@
     top: -10px;
     left: 50%;
     transform: translateX(-50%);
-    background: var(--bg);
+    background: var(--warm-cream);
     padding: 0 16px;
     color: var(--accent);
     font-size: 0.7em;
@@ -150,16 +323,30 @@
   }
 
   /* ---- 响应式 ---- */
-  @media (max-width: 600px) {
-    .container { padding: 40px 22px; }
+  @media (max-width: 700px) {
+    .container { padding: 48px 24px; margin: 0 8px; }
     body { font-size: 15px; }
     .title-block h1 { font-size: 1.7em; }
     .section-break::before,
     .section-break::after { width: 30px; margin: 0 8px; }
+    .side-daisies-left,
+    .side-daisies-right { display: none; }
+    .scene-flashback,
+    .scene-firework,
+    .scene-vows,
+    .scene-ending { padding: 24px 18px; }
   }
 </style>
 </head>
 <body>
+
+<!-- 左侧雏菊花藤 -->
+<div class="side-daisies-left" aria-hidden="true">
+  <span class="sd">✿</span><span class="sd">❀</span><span class="sd">✿</span><span class="sd">❀</span><span class="sd">✿</span><span class="sd">❀</span><span class="sd">✿</span><span class="sd">❀</span><span class="sd">✿</span><span class="sd">❀</span>
+</div>
+<div class="side-daisies-right" aria-hidden="true">
+  <span class="sd">❀</span><span class="sd">✿</span><span class="sd">❀</span><span class="sd">✿</span><span class="sd">❀</span><span class="sd">✿</span><span class="sd">❀</span><span class="sd">✿</span><span class="sd">❀</span><span class="sd">✿</span>
+</div>
 
 <div class="container">
 
@@ -360,7 +547,7 @@
 
 <p>窗外的风恰好掀动半扇窗，卷着几片广场上洒落的白雏菊花瓣飞进来，轻飘飘落在他的手背上。软乎乎的触感，像极了多年前那个盛夏午后，猝不及防撞进他人生里的那抹温柔。他的目光追着花瓣落向窗外熙攘的人潮，思绪却一瞬间翻山越岭，跌回了那片漫山遍野都开着雏菊的花田。</p>
 
-<div class="section-break">· · ·</div>
+<div class="scene-flashback">
 
 <p>漫山遍野的雏菊迎着日光，开得肆意。风一吹，白色花浪层层翻涌，青草和阳光的暖香往鼻子里钻。</p>
 
@@ -404,6 +591,8 @@
 
 <p>就在那个蝉鸣聒噪的盛夏夜晚，十七岁的赖衍，第一次懂了书里写的"一见钟情"是什么意思。不是什么惊天动地的盛大瞬间，只是雏菊田里的一阵风，一只带着奶香味的小羊，一个笑起来盛了满目光芒的姑娘。就这么毫无预兆地，在他心里，开了漫山遍野的雏菊。</p>
 
+</div>
+
 <div class="section-break">· · ·</div>
 
 <p>思绪被慌慌张张冲进门的洪靖等人拉回现实。赖衍垂眼，看着自己袖口那圈银线绣成的小小雏菊，指尖拂过细密的针脚。眼底的慌乱尽数褪去，只剩下满溢的温柔与笃定。</p>
@@ -442,6 +631,8 @@
 
 <p>苏清鸢的指尖轻轻蜷缩，勾住了他的手指，抬头看着他，眼里盛着满满的温柔，轻声说了句："我爱你。"温热的气息拂过颈侧的发丝，那几缕软发随着她的呼吸颤了颤，又贴回了光洁的皮肤上。赖衍的心跳又漏了一拍。</p>
 
+<div class="scene-vows">
+
 <p>两人转身走向礼台。程亦已早早站在了台中央，手里捏着的手卡被随手放到一旁——他决定即兴发挥。平日里总挂在脸上的散漫笑意收了大半，眼底藏着点老友独有的促狭，余下的全是实打实的郑重。他扫过台下乌泱泱的宾客，目光落回眼前这对经历无数分合、终于并肩站在这里的新人，拿起话筒。沉稳清朗的声音透过音响传遍整个广场，也同步传遍了新海市的每一块全息屏：</p>
 
 <p>"各位来宾下午好，我是今天的司仪程亦，也是赖衍与苏清鸢这场爱情的见证者。</p>
@@ -466,13 +657,13 @@
 
 <p>赖衍握着苏清鸢的手，目光一刻都没有离开她的眼睛。他一字一句，说得无比认真，每一个字都仿佛要刻进灵魂里：</p>
 
-<p>"我愿意。"</p>
+<p class="vows-highlight">"我愿意。"</p>
 
 <p>程亦又转头看向苏清鸢，声音放得更柔了些："苏清鸢女士，你是否愿意嫁给赖衍先生为夫？无论顺境逆境，富贵贫穷，健康疾病，无论前路是坦途万里，还是荆棘丛生，你都永远爱他，陪伴他，不离不弃，直至生命尽头？"</p>
 
 <p>苏清鸢的眼泪终于顺着脸颊落了下来，珍珠似的砸在两人交握的手背上。她抬手，用指尖轻轻擦掉赖衍眼角的湿意，垂落的鬓发随着动作滑下来，贴在她泛红的脸颊边。她笑着回应他，温柔却无比坚定：</p>
 
-<p>"我愿意。"</p>
+<p class="vows-highlight">"我愿意。"</p>
 
 <p>"接下来，有请新人交换戒指！"</p>
 
@@ -480,9 +671,11 @@
 
 <p>苏清鸢随即拿起另一枚戒指，指尖稳得不像话，却在触到他指节的瞬间微微一顿，而后稳稳将戒圈套进了他的无名指。冰凉的金属贴在温热的皮肤上，却像一簇火，烫得两个人的心跳同时乱了节拍。指尖相触的刹那，那些雨夜里的奔赴、绝境中的相守、无数个咬牙撑过的时刻，全都在这一刻，寻到了最终的归宿。</p>
 
+</div>
+
 <p>两枚戒指落定的瞬间，全场的掌声与欢呼顺着晚风席卷了整个露天广场。暮色把天空浸成墨蓝，沿路的串灯与仪式区的追光亮得温柔，所有人都下意识抬眼望向夜空——这场婚礼最受瞩目的烟花环节，终于要来了。</p>
 
-<div class="section-break">· · ·</div>
+<div class="scene-firework">
 
 <p>满场宾客围着新人欢呼雀跃之际，一道深灰色的身影正双手插兜，不紧不慢地朝礼台前方走去。</p>
 
@@ -513,6 +706,8 @@
 <p>徐璐站在不远处，指尖停在平板上早已走完的烟花流程表上，看着天幕上还没散尽的光屑，推了推滑到鼻尖的金丝眼镜，嘴角难得勾了点浅淡的笑意。</p>
 
 <p>高杨依旧站在原地，抬眼望着漫天未散的星雨，眼尾盛着漫天烟火，亮得惊人。晚风卷着宾客的欢呼与甜香落在他身上，他指尖轻轻摩挲着口袋里剩下的半块棱晶碎片，漫不经心地想——总算没辜负洪靖那家伙的念叨，也圆满了这场奔赴半生的约定。</p>
+
+</div>
 
 <div class="section-break">· · ·</div>
 
@@ -628,6 +823,8 @@
 
 <p>赖桦看着闹作一团的两个人，笑了笑，没有说话。他从赖衍手里接过那张扑克牌，抬眼望了望漫天橘色的霞光，指尖轻轻一送，便将它抛向了被晚风揉得绵软的天幕。</p>
 
+<div class="scene-ending">
+
 <p>此刻，换下婚纱的苏清鸢面带羞涩，缓步朝观景台中央走来。她褪去了繁复的婚纱，一身素净长裙更衬得身姿温婉，手里捧着一束新鲜的白色雏菊，花瓣在晚风里轻轻颤动。</p>
 
 <p>赖桦看着这幕场景，心下已然神会。这个常年面瘫、素来冷硬如冰的男人，脸上难得浮现出一丝浅淡却真切的笑容。他微微摇头，伸手用胳膊肘轻轻钳住陈文正的脖子，语气温和却不容拒绝："走吧，不要打扰他们的二人世界了。"</p>
@@ -642,13 +839,15 @@
 
 <p>风里带着雏菊的香气。远处传来孩子们的笑声。城市的灯火一盏盏亮起来，像落在人间的星星，连绵不绝，一直铺到海天相接的地方。</p>
 
-<p>暮云合璧，落日熔金。风也温柔。</p>
+<p class="ending-line">暮云合璧，落日熔金。风也温柔。</p>
 
-<p>所有的等待都有了归处。</p>
+<p class="ending-line">所有的等待都有了归处。</p>
 
 <p>她轻轻举起那束倔强而干净的雏菊，睫毛微颤，目光温柔而又坚定，声音轻软如晚风：</p>
 
-<p>"余生，请多指教。"</p>
+<p class="ending-line">"余生，请多指教。"</p>
+
+</div>
 
 <p style="text-align:center; margin-top:52px; letter-spacing:.25em; color:var(--muted); font-size:0.95em;">（完）</p>
 
@@ -668,6 +867,11 @@
     var drift = (Math.random() - 0.5) * 180;
     var duration = 7000 + Math.random() * 9000;
     var startX = Math.random() * window.innerWidth;
+    // 偶尔暖金色花瓣
+    var isWarm = Math.random() < 0.25;
+    var bg = isWarm
+      ? 'radial-gradient(ellipse at center, #fef9f0 0%, #f5e6d0 60%, #e8d0b0 100%)'
+      : 'radial-gradient(ellipse at center, #fafaf7 0%, #f5efe0 60%, #e8d5c4 100%)';
     petal.style.cssText =
       'left:' + startX + 'px;' +
       'top:-20px;' +
@@ -675,7 +879,7 @@
       'height:' + (size * 0.65) + 'px;' +
       '--drift:' + drift + 'px;' +
       'animation-duration:' + duration + 'ms;' +
-      'background:radial-gradient(ellipse at center, #fafaf7 0%, #f5efe0 60%, #e8d5c4 100%);' +
+      'background:' + bg + ';' +
       'border-radius:50% 0 50% 0;' +
       'opacity:' + (0.35 + Math.random() * 0.35) + ';';
     document.body.appendChild(petal);
@@ -684,12 +888,12 @@
     }, duration + 200);
   }
 
-  for (var i = 0; i < 6; i++) {
-    setTimeout(function() { createPetal(); }, i * 500);
+  for (var i = 0; i < 8; i++) {
+    setTimeout(function() { createPetal(); }, i * 400);
   }
   setInterval(function() {
-    if (document.querySelectorAll('.petal').length < 8) createPetal();
-  }, 2200);
+    if (document.querySelectorAll('.petal').length < 10) createPetal();
+  }, 1800);
 
   // 偶尔飘过气球
   function createBalloon() {
@@ -710,7 +914,7 @@
       'animation-duration:' + duration + 'ms;' +
       'background:radial-gradient(circle at 35% 30%, ' + color + ' 0%, ' + color.replace('c4','a4') + ' 60%, ' + color.replace('c4','84') + ' 100%);' +
       'border-radius:50%;' +
-      'opacity:0.5;';
+      'opacity:0.45;';
     document.body.appendChild(balloon);
     setTimeout(function() {
       if (balloon.parentNode) balloon.parentNode.removeChild(balloon);
@@ -718,10 +922,31 @@
   }
 
   setInterval(function() {
-    if (Math.random() < 0.3 && document.querySelectorAll('.balloon').length < 2) {
+    if (Math.random() < 0.25 && document.querySelectorAll('.balloon').length < 2) {
       createBalloon();
     }
-  }, 6000);
+  }, 7000);
+
+  // 微光粒子
+  function createSparkles() {
+    for (var i = 0; i < 6; i++) {
+      var sparkle = document.createElement('div');
+      sparkle.className = 'sparkle';
+      sparkle.style.cssText =
+        'left:' + (5 + Math.random() * 90) + 'vw;' +
+        'top:' + (10 + Math.random() * 80) + 'vh;' +
+        'animation-delay:' + (Math.random() * 4) + 's;' +
+        'animation-duration:' + (3 + Math.random() * 5) + 's;' +
+        'width:' + (1.5 + Math.random() * 2) + 'px;' +
+        'height:' + (1.5 + Math.random() * 2) + 'px;';
+      document.body.appendChild(sparkle);
+    }
+  }
+  createSparkles();
+  setInterval(function() {
+    var existing = document.querySelectorAll('.sparkle');
+    if (existing.length < 8) createSparkles();
+  }, 5000);
 })();
 </script>
 
