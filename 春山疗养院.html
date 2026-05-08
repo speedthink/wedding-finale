@@ -971,7 +971,7 @@
 
     <!-- 陈伯的纸条 - 交互元素 -->
     <div style="text-align:center;">
-      <div class="paper-slip" id="chen-note">>
+      <div class="paper-slip" id="chen-note" onclick="unfoldChenNote()">>
         <div class="slip-label">
           <div class="slip-from">—— 陈伯的纸条 ——</div>
           <div class="slip-hint">点击打开</div>
@@ -1032,7 +1032,7 @@
 
     <!-- 前主管的隐藏便签 -->
     <div style="text-align:center; margin-top:16px;">
-      <div class="paper-slip" id="ex-chief-slip" style="transform:rotate(2deg);">
+      <div class="paper-slip" id="ex-chief-slip" onclick="unfoldExChiefNote()" style="transform:rotate(2deg);">
         <div class="slip-label">
           <div class="slip-from">—— 夹在备忘录中的便签 ——</div>
           <div class="slip-hint">点击打开</div>
@@ -1074,7 +1074,7 @@
       护士在说谎。或者——护士根本不知道408里有什么。我不知道哪种情况更可怕。</p>
 
       <!-- 408敲门交互 -->
-      <div style="text-align:center; margin:12px 0; padding:12px; cursor:pointer; user-select:none; font-size:15px;" id="knock-trigger">
+      <div style="text-align:center; margin:12px 0; padding:12px; cursor:pointer; user-select:none; font-size:15px;" id="knock-trigger" onclick="triggerKnock()">
         <span style="font-size:11px; color:rgba(139,26,26,0.25); letter-spacing:2px; transition:color 0.5s;" id="knock-hint">▎ 叩、叩、叩 —— 你听到墙那边的敲击声了吗？（点击回应）</span>
       </div>
 
@@ -1143,13 +1143,13 @@
   <div style="text-align:center; padding:20px 0;">
     <p style="font-size:13px; color:rgba(180,40,40,0.25); letter-spacing:3px; margin-bottom:16px;">▎ 你站在走廊里。面前是七扇门。选择一扇打开。</p>
     <div class="doors-row" id="seven-doors">
-      <div class="door-icon" data-door="1">一</div>
-      <div class="door-icon" data-door="2">二</div>
-      <div class="door-icon" data-door="3">三</div>
-      <div class="door-icon" data-door="4">四</div>
-      <div class="door-icon" data-door="5">五</div>
-      <div class="door-icon" data-door="6">六</div>
-      <div class="door-icon" data-door="7">七</div>
+      <div class="door-icon" data-door="1" onclick="openDoor(1,this)">一</div>
+      <div class="door-icon" data-door="2" onclick="openDoor(2,this)">二</div>
+      <div class="door-icon" data-door="3" onclick="openDoor(3,this)">三</div>
+      <div class="door-icon" data-door="4" onclick="openDoor(4,this)">四</div>
+      <div class="door-icon" data-door="5" onclick="openDoor(5,this)">五</div>
+      <div class="door-icon" data-door="6" onclick="openDoor(6,this)">六</div>
+      <div class="door-icon" data-door="7" onclick="openDoor(7,this)">七</div>
     </div>
     <p style="font-size:10px; color:rgba(139,26,26,0.15); letter-spacing:2px; margin-top:12px;" id="door-result"></p>
   </div>
@@ -1164,7 +1164,7 @@
       <div class="doc-stamp">（患者手册最后一页 · 仅在需要时显现文字）</div>
     </div>
 
-    <div class="hidden-page" id="hidden-content">
+    <div class="hidden-page" id="hidden-content" onclick="revealLastPage()">
       <div class="hidden-title">以下为应急措施</div>
 
       <div class="hidden-text">
@@ -1214,642 +1214,381 @@
 </div>
 
 <script>
-// ═══════════════════════════════════════════════
+// ═══════════════════════════════════════
 //  春山疗养院 —— 恐怖氛围 + 交互系统
-// ═══════════════════════════════════════════════
+// ═══════════════════════════════════════
 
-(function() {
-  'use strict';
+var ST = {
+  mouseX: window.innerWidth / 2,
+  mouseY: window.innerHeight / 2,
+  flashlightOn: false,
+  mirrorActive: false,
+  idleTime: 0,
+  lastPageRevealed: false,
+  doorOpened: false,
+  pageStartTime: Date.now(),
+  shadowFigureTimer: null,
+  glitchTimer: null,
+  whisperTimer: null,
+  dripTimer: null,
+  mirrorTimer: null
+};
 
-  // ── 全局状态 ──
-  var state = {
-    mouseX: window.innerWidth / 2,
-    mouseY: window.innerHeight / 2,
-    scrollY: 0,
-    flashlightOn: false,
-    shadowFigureTimer: null,
-    glitchTimer: null,
-    whisperTimer: null,
-    dripTimer: null,
-    mirrorTimer: null,
-    mirrorActive: false,
-    idleTimer: null,
-    idleTime: 0,
-    lastPageRevealed: false,
-    doorOpened: false,
-    chenNoteRead: false,
-    exChiefNoteRead: false,
-    pageStartTime: Date.now(),
-    readCountEl: null
-  };
+var isMobile = window.innerWidth <= 768;
 
-  var isMobile = window.innerWidth <= 768;
+// === 工具函数 ===
+function showToast(msg) {
+  var t = document.getElementById('found-note-toast');
+  if (!t) return;
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(function() { t.classList.remove('show'); }, 3500);
+}
 
-  document.addEventListener('mousemove', function(e) {
-    state.mouseX = e.clientX;
-    state.mouseY = e.clientY;
-    state.idleTime = 0;
-    checkMirrorProximity(e.clientX, e.clientY);
-  });
-
-  // ── 视差效果 ──
-  var docCards = document.querySelectorAll('.doc-card');
-  document.addEventListener('mousemove', function(e) {
-    if (isMobile) return;
-    var cx = e.clientX / window.innerWidth - 0.5;
-    var cy = e.clientY / window.innerHeight - 0.5;
-    docCards.forEach(function(card) {
-      var depth = parseFloat(card.getAttribute('data-depth') || 0.02);
-      var rx = -cy * depth * 8;
-      var ry = cx * depth * 8;
-      card.style.transform = 'rotateX(' + rx + 'deg) rotateY(' + ry + 'deg)';
-    });
-  });
-
-  // ── 滚动追踪 ──
-  window.addEventListener('scroll', function() {
-    state.scrollY = window.scrollY;
-    var scrollRatio = window.scrollY / (document.body.scrollHeight - window.innerHeight);
-    if (scrollRatio > 0.8) {
-      document.body.classList.add('creeping-darkness');
-    } else {
-      document.body.classList.remove('creeping-darkness');
-    }
-  });
-
-  // ── 影子人影 ──
-  var shadowFigure = document.getElementById('shadow-figure');
-  var shadowVisible = false;
-
-  function spawnShadowFigure() {
-    if (isMobile) return;
-    if (shadowVisible) return;
-
-    var edge = Math.floor(Math.random() * 3);
-    var x, y;
-    if (edge === 0) {
-      x = -40 + Math.random() * 60;
-      y = Math.random() * window.innerHeight * 0.8;
-    } else if (edge === 1) {
-      x = window.innerWidth - 40 - Math.random() * 60;
-      y = Math.random() * window.innerHeight * 0.8;
-    } else {
-      x = Math.random() * window.innerWidth;
-      y = window.innerHeight - 60 + Math.random() * 40;
-    }
-
-    shadowFigure.style.left = x + 'px';
-    shadowFigure.style.top = y + 'px';
-    shadowFigure.style.transform = 'scaleX(' + (Math.random() > 0.5 ? 1 : -1) + ')';
-    shadowFigure.classList.add('visible');
-    shadowVisible = true;
-
-    var checkProximity = function(e) {
-      if (!shadowVisible) return;
-      var dx = e.clientX - (x + 40);
-      var dy = e.clientY - (y + 90);
-      var dist = Math.sqrt(dx * dx + dy * dy);
-      if (dist < 250) {
-        shadowFigure.classList.add('fleeing');
-        shadowFigure.classList.remove('visible');
-        shadowVisible = false;
-        document.removeEventListener('mousemove', checkProximity);
-        scheduleShadowFigure(Math.random() * 25000 + 15000);
-      }
-    };
-    document.addEventListener('mousemove', checkProximity);
-
+function triggerGlitch() {
+  var g = document.getElementById('screen-glitch');
+  if (!g) return;
+  g.classList.add('active');
+  setTimeout(function() { g.classList.remove('active'); }, 60 + Math.random() * 80);
+  if (Math.random() < 0.3) {
     setTimeout(function() {
-      if (shadowVisible) {
-        shadowFigure.classList.remove('visible');
-        shadowVisible = false;
-        document.removeEventListener('mousemove', checkProximity);
-        scheduleShadowFigure(Math.random() * 20000 + 10000);
-      }
-    }, 4000 + Math.random() * 3000);
+      g.classList.add('active');
+      setTimeout(function() { g.classList.remove('active'); }, 50);
+    }, 120);
   }
+}
 
-  function scheduleShadowFigure(delay) {
-    if (shadowFigureTimer) clearTimeout(shadowFigureTimer);
-    shadowFigureTimer = setTimeout(spawnShadowFigure, delay || Math.random() * 20000 + 12000);
-  }
+// === 交互：陈伯的纸条 ===
+function unfoldChenNote() {
+  var note = document.getElementById('chen-note');
+  if (!note || note.classList.contains('unfolded')) return;
+  note.classList.add('unfolded');
+  triggerGlitch();
+  showToast('你打开了陈伯的纸条 —— 里面是逃离的方法');
+}
 
-  if (!isMobile) scheduleShadowFigure(15000);
+// === 交互：前主管的便签 ===
+function unfoldExChiefNote() {
+  var note = document.getElementById('ex-chief-slip');
+  if (!note || note.classList.contains('unfolded')) return;
+  note.classList.add('unfolded');
+  triggerGlitch();
+  showToast('你打开了夹在备忘录中的便签 —— 前主管的最后警告');
+}
 
-  // ── 随机屏幕闪烁 ──
-  var screenGlitch = document.getElementById('screen-glitch');
-  function triggerGlitch() {
-    screenGlitch.classList.add('active');
-    setTimeout(function() { screenGlitch.classList.remove('active'); }, 60 + Math.random() * 80);
-    if (Math.random() < 0.3) {
+// === 交互：408敲门 ===
+var knockCount = 0;
+function triggerKnock() {
+  knockCount++;
+  var hint = document.getElementById('knock-hint');
+  var kt = document.getElementById('knock-trigger');
+
+  for (var i = 0; i < 3; i++) {
+    (function(d) {
       setTimeout(function() {
-        screenGlitch.classList.add('active');
-        setTimeout(function() { screenGlitch.classList.remove('active'); }, 50);
-      }, 120);
-    }
+        var k = document.createElement('div');
+        k.className = 'knock-effect';
+        k.textContent = '叩';
+        k.style.left = (40 + Math.random() * 20) + '%';
+        k.style.top = (30 + Math.random() * 40) + '%';
+        document.body.appendChild(k);
+        setTimeout(function() { if (k.parentNode) k.parentNode.removeChild(k); }, 600);
+      }, d);
+    })(i * 200);
   }
 
-  function scheduleGlitch() {
-    if (glitchTimer) clearTimeout(glitchTimer);
-    glitchTimer = setTimeout(function() {
-      triggerGlitch();
-      scheduleGlitch();
-    }, Math.random() * 30000 + 20000);
+  if (knockCount === 1 && hint) {
+    hint.textContent = '▎ 叩、叩、叩 —— 那边回了四下。它永远比你多一下……（再敲一次？）';
+    hint.style.color = 'rgba(180,40,40,0.5)';
+  } else if (knockCount === 2 && hint) {
+    hint.textContent = '▎ 叩、叩 —— 那边回了三下。它学会了你的节奏。墙那边传来了与你相似的声音……';
+    hint.style.color = 'rgba(180,40,40,0.7)';
+    triggerGlitch();
+  } else if (knockCount >= 3 && hint) {
+    hint.textContent = '▎ ……墙壁沉默了。但你知道它不是离开了。它只是在听。不要敲了。';
+    hint.style.color = 'rgba(200,30,30,0.8)';
+    if (kt) kt.style.pointerEvents = 'none';
   }
-  scheduleGlitch();
+}
 
-  // ── 灯光闪烁 ──
-  var lampFlicker = document.getElementById('lamp-flicker');
-  function flickerLamp() {
-    lampFlicker.style.opacity = (Math.random() * 0.1 + 0.03);
-    lampFlicker.style.transition = 'opacity ' + (Math.random() * 0.2 + 0.05) + 's';
-    setTimeout(function() {
-      lampFlicker.style.opacity = '0';
-      lampFlicker.style.transition = 'opacity 0.3s';
-    }, 80 + Math.random() * 200);
+// === 交互：七扇门 ===
+var DOOR_MSGS = {
+  1: '门后是向下的楼梯。无尽的楼梯。—— 前三扇门之一。通向地下室。',
+  2: '门后是黑暗。有什么东西在呼吸。—— 前三扇门之一。危险。',
+  3: '门后是——纯粹的虚无。不是空间，是"不存在"。—— 前三扇门之一。',
+  4: '门后是森林。冷风。月光。松针的味道。—— 你找到了一扇通向外界的门。',
+  5: '门后是走廊。另一条一模一样的走廊。你看到了自己的背影。',
+  6: '门后是408号房间。有人在里面，穿着白色病号服，正在变成你。',
+  7: '门后是正门大厅。阳光。前台对你微笑。但你真的确定你是你自己吗？'
+};
+
+function openDoor(num, el) {
+  if (ST.doorOpened) return;
+  if (!el || el.classList.contains('opened')) return;
+  ST.doorOpened = true;
+  el.classList.add('opened');
+
+  var result = document.getElementById('door-result');
+  if (result) {
+    result.textContent = DOOR_MSGS[num] || '门后是一片空白。';
+    result.style.color = num === 4 ? 'rgba(120,180,120,0.6)' : 'rgba(180,40,40,0.55)';
+    result.style.fontSize = '14px';
   }
-
-  setInterval(function() {
-    if (Math.random() < 0.15) flickerLamp();
-  }, 5000);
-
-  // ── 规则文字随机闪红 ──
-  setInterval(function() {
-    var rules = document.querySelectorAll('.rule');
-    if (rules.length === 0) return;
-    var idx = Math.floor(Math.random() * rules.length);
-    rules[idx].classList.add('flicker');
-    setTimeout(function() { rules[idx].classList.remove('flicker'); }, 300);
-  }, 8000 + Math.random() * 6000);
-
-  // ── 批注文字偶尔渗红 ──
-  setInterval(function() {
-    var notes = document.querySelectorAll('.note');
-    if (notes.length === 0) return;
-    var idx = Math.floor(Math.random() * notes.length);
-    notes[idx].classList.add('bleeding');
-    setTimeout(function() { notes[idx].classList.remove('bleeding'); }, 2000 + Math.random() * 2000);
-  }, 15000);
-
-  // ── 角落文字随时间变明显 ──
-  var cornerWatcher = document.getElementById('corner-watcher');
-  setInterval(function() {
-    var elapsed = (Date.now() - state.pageStartTime) / 1000;
-    var opacity = Math.min(0.04 + elapsed * 0.00015, 0.18);
-    cornerWatcher.style.color = 'rgba(180,40,40,' + opacity + ')';
-    if (state.readCountEl) {
-      var blurredCount = '████'.substring(0, Math.max(1, 4 - Math.floor(elapsed / 180)));
-      state.readCountEl.innerHTML = '本档案已被阅读 ' + blurredCount + ' 次 · 您可能是第 ' + blurredCount + ' 位读者 · 请注意您的手';
-    }
-  }, 30000);
-
-  state.readCountEl = document.getElementById('read-count');
-
-  // ── 低语文字 ──
-  var whisperOverlay = document.getElementById('whisper-overlay');
-  var whispers = [
-    '不要回头',
-    '有人在看着你',
-    '408是空的',
-    '你不是你',
-    '跑',
-    '它知道你在读',
-    '陈伯从来不笑',
-    '你还有几天？',
-    '镜子里的不是你',
-    '嘘——',
-    '第三扇门',
-    '快走'
-  ];
-
-  function showWhisper() {
-    if (isMobile) return;
-    var text = whispers[Math.floor(Math.random() * whispers.length)];
-    whisperOverlay.textContent = text;
-    whisperOverlay.style.left = (10 + Math.random() * 70) + '%';
-    whisperOverlay.style.top = (10 + Math.random() * 70) + '%';
-    whisperOverlay.style.fontSize = (11 + Math.random() * 8) + 'px';
-    whisperOverlay.classList.add('active');
-    setTimeout(function() {
-      whisperOverlay.classList.remove('active');
-    }, 2500 + Math.random() * 2000);
-  }
-
-  function scheduleWhisper() {
-    if (whisperTimer) clearTimeout(whisperTimer);
-    whisperTimer = setTimeout(function() {
-      showWhisper();
-      scheduleWhisper();
-    }, Math.random() * 30000 + 20000);
-  }
-  if (!isMobile) scheduleWhisper();
-
-  // ── 墨迹滴落 ──
-  function createInkDrip() {
-    var drip = document.createElement('div');
-    drip.className = 'ink-drip';
-    var x = Math.random() * window.innerWidth;
-    var length = 30 + Math.random() * 120;
-    drip.style.left = x + 'px';
-    drip.style.setProperty('--drip-length', length + 'px');
-    drip.style.setProperty('--drip-end', length + 20 + 'px');
-    drip.style.animationDuration = (2 + Math.random() * 4) + 's';
-    document.body.appendChild(drip);
-    setTimeout(function() {
-      if (drip.parentNode) drip.parentNode.removeChild(drip);
-    }, 6000);
-  }
-
-  function scheduleDrip() {
-    if (dripTimer) clearTimeout(dripTimer);
-    dripTimer = setTimeout(function() {
-      createInkDrip();
-      scheduleDrip();
-    }, Math.random() * 18000 + 12000);
-  }
-  if (!isMobile) scheduleDrip();
-
-  // ── 闲置检测 ──
-  setInterval(function() {
-    state.idleTime++;
-    if (state.idleTime > 45 && !isMobile) {
-      cornerWatcher.style.color = 'rgba(180,40,40,0.22)';
-      setTimeout(function() {
-        cornerWatcher.style.color = 'rgba(180,40,40,0.04)';
-      }, 3000);
-      if (Math.random() < 0.4) triggerGlitch();
-      state.idleTime = 0;
-    }
-  }, 1000);
-
-  // ── 键盘交互：F键"手电筒" ──
-  document.addEventListener('keydown', function(e) {
-    if (e.key === 'f' || e.key === 'F') {
-      state.flashlightOn = !state.flashlightOn;
-      if (state.flashlightOn) {
-        document.body.style.filter = 'brightness(1.2)';
-        document.querySelector('.soft-vignette').style.boxShadow = 'inset 0 0 100px rgba(0,0,0,0.3), inset 0 0 40px rgba(0,0,0,0.15)';
-        var tipEl = document.getElementById('interaction-tip');
-        if (tipEl) tipEl.textContent = '手电筒已打开 —— 再按 F 关闭';
-      } else {
-        document.body.style.filter = '';
-        document.querySelector('.soft-vignette').style.boxShadow = '';
-        var tipEl2 = document.getElementById('interaction-tip');
-        if (tipEl2) tipEl2.textContent = '按 F 键可以开关手电筒  ·  寻找纸条并点击它们';
-      }
-    }
-  });
-
-  // 显示交互提示
+  if (num === 4) { el.classList.add('escape'); triggerGlitch(); showToast('你找到了通往外界的门。'); }
+  if (num === 6) { triggerGlitch(); setTimeout(triggerGlitch, 400); document.body.classList.add('page-shake'); setTimeout(function() { document.body.classList.remove('page-shake'); }, 300); }
   setTimeout(function() {
-    var tip = document.getElementById('interaction-tip');
-    if (tip) tip.classList.add('show');
-  }, 8000);
+    document.querySelectorAll('.door-icon').forEach(function(d) { if (d !== el) d.classList.add('opened'); });
+  }, 300);
+}
 
-  // ═══════════════════════════════════════
-  //  交互：最后一页 —— 悬停显现 + 点击永久显示
-  // ═══════════════════════════════════════
-  function revealLastPage() {
-    var page = document.getElementById('hidden-content');
-    if (!page || state.lastPageRevealed) return;
-    page.classList.add('revealed');
-    state.lastPageRevealed = true;
-    triggerGlitch();
-    document.querySelectorAll('.doc-separator').forEach(function(s) { s.classList.add('dread'); });
-    showToast('应急措施已永久显现');
-  }
+// === 交互：最后一页 ===
+function revealLastPage() {
+  var page = document.getElementById('hidden-content');
+  if (!page || ST.lastPageRevealed) return;
+  page.classList.add('revealed');
+  ST.lastPageRevealed = true;
+  triggerGlitch();
+  document.querySelectorAll('.doc-separator').forEach(function(s) { s.classList.add('dread'); });
+  showToast('应急措施已永久显现');
+}
 
-  // IntersectionObserver —— 滚动到附近时提示
-  var hiddenPage = document.getElementById('hidden-content');
-  if (hiddenPage) {
-    hiddenPage.addEventListener('click', revealLastPage);
-    var observer = new IntersectionObserver(function(entries) {
-      entries.forEach(function(entry) {
-        if (entry.isIntersecting && !state.lastPageRevealed) {
-          // 不做自动揭示，让用户自己悬停或点击
-        }
-      });
-    }, { threshold: 0.5 });
-    observer.observe(hiddenPage);
-  }
+// === 注册所有事件监听（DOM 已就绪） ===
+console.log('春山疗养院 v3.1 已加载 —— 交互系统就绪');
 
-  // ═══════════════════════════════════════
-  //  交互：陈伯的纸条
-  // ═══════════════════════════════════════
-  function unfoldChenNote() {
-    var note = document.getElementById('chen-note');
-    if (!note || note.classList.contains('unfolded')) return;
-    note.classList.add('unfolded');
-    state.chenNoteRead = true;
-    triggerGlitch();
-    showToast('你打开了陈伯的纸条 —— 里面是逃离的方法');
-    var tip = document.getElementById('interaction-tip');
-    if (tip) tip.textContent = '陈伯的纸条揭示了关键信息：厨房冰柜后面有维修通道';
-    setTimeout(function() {
-      if (tip) tip.textContent = '按 F 键可以开关手电筒  ·  寻找更多纸条';
-    }, 5000);
-  }
+// 纸条
+var chenNote = document.getElementById('chen-note');
+if (chenNote) { chenNote.addEventListener('click', unfoldChenNote); console.log('chen-note 绑定OK'); }
 
-  var chenNote = document.getElementById('chen-note');
-  if (chenNote) { chenNote.addEventListener('click', unfoldChenNote); }
+var exChiefSlip = document.getElementById('ex-chief-slip');
+if (exChiefSlip) { exChiefSlip.addEventListener('click', unfoldExChiefNote); console.log('ex-chief-slip 绑定OK'); }
 
-  // ═══════════════════════════════════════
-  //  交互：前安保主管的便签
-  // ═══════════════════════════════════════
-  function unfoldExChiefNote() {
-    var note = document.getElementById('ex-chief-slip');
-    if (!note || note.classList.contains('unfolded')) return;
-    note.classList.add('unfolded');
-    state.exChiefNoteRead = true;
-    triggerGlitch();
-    showToast('你打开了夹在备忘录中的便签 —— 前主管的最后警告');
-  }
+// 敲门
+var knocker = document.getElementById('knock-trigger');
+if (knocker) { knocker.addEventListener('click', triggerKnock); console.log('knock-trigger 绑定OK'); }
 
-  var exChiefSlip = document.getElementById('ex-chief-slip');
-  if (exChiefSlip) { exChiefSlip.addEventListener('click', unfoldExChiefNote); }
-
-  // ═══════════════════════════════════════
-  //  交互：408敲门
-  // ═══════════════════════════════════════
-  var knockCount = 0;
-  function triggerKnock() {
-    knockCount++;
-    var hint = document.getElementById('knock-hint');
-    var knockTrigger = document.getElementById('knock-trigger');
-
-    for (var i = 0; i < 3; i++) {
-      (function(delay) {
-        setTimeout(function() {
-          var knock = document.createElement('div');
-          knock.className = 'knock-effect';
-          knock.textContent = '叩';
-          knock.style.left = (40 + Math.random() * 20) + '%';
-          knock.style.top = (30 + Math.random() * 40) + '%';
-          document.body.appendChild(knock);
-          setTimeout(function() {
-            if (knock.parentNode) knock.parentNode.removeChild(knock);
-          }, 600);
-        }, delay);
-      })(i * 200);
-    }
-
-    if (knockCount === 1) {
-      if (hint) {
-        hint.textContent = '▎ 叩、叩、叩 —— 那边回了四下。它永远比你多一下……（再敲一次？）';
-        hint.style.color = 'rgba(180,40,40,0.5)';
-      }
-    } else if (knockCount === 2) {
-      if (hint) {
-        hint.textContent = '▎ 叩、叩 —— 那边回了三下。它学会了你的节奏。墙那边传来了与你相似的声音……';
-        hint.style.color = 'rgba(180,40,40,0.7)';
-      }
-      triggerGlitch();
-      setTimeout(function() {
-        whisperOverlay.textContent = '你为什么要敲回去？';
-        whisperOverlay.style.left = '45%';
-        whisperOverlay.style.top = '40%';
-        whisperOverlay.style.fontSize = '16px';
-        whisperOverlay.classList.add('active');
-        setTimeout(function() { whisperOverlay.classList.remove('active'); }, 3000);
-      }, 1500);
-    } else {
-      if (hint) {
-        hint.textContent = '▎ ……墙壁沉默了。但你知道它不是离开了。它只是在听。不要敲了。';
-        hint.style.color = 'rgba(200,30,30,0.8)';
-      }
-      if (knockTrigger) knockTrigger.style.pointerEvents = 'none';
-    }
-  }
-
-  var knockTrigger = document.getElementById('knock-trigger');
-  if (knockTrigger) { knockTrigger.addEventListener('click', triggerKnock); }
-
-  // ═══════════════════════════════════════
-  //  交互：七扇门抉择
-  // ═══════════════════════════════════════
-  var doorMessages = {
-    1: '门后是向下的楼梯。无尽的楼梯。你差点走下去。—— 这是前三扇门之一。通向地下室。',
-    2: '门后是黑暗。彻底的黑暗。有什么东西在黑暗中呼吸。—— 前三扇门之一。危险。',
-    3: '门后是——什么都没有。纯粹的虚无。你看到的不是空间，是"不存在"。—— 前三扇门之一。不要进去。',
-    4: '门后是森林。冷风。月光。树木。你能闻到松针的味道。你找到了一扇通向外界的门。但你真的确定这是第四扇吗？',
-    5: '门后是走廊。另一条走廊。一模一样的走廊。你看到了自己的背影。—— 你打开了错误的门。',
-    6: '门后是408号房间。有人在里面。穿着白色的病号服。正在变成你的样子。—— 关上门。快。',
-    7: '门后是——正门大厅。阳光。前台的工作人员抬头看了你一眼。她没有问你去哪了。她只是微笑。你可以走出去。但你真的确定你是你自己吗？'
-  };
-
-  function openDoor(doorNum, el) {
-    if (state.doorOpened) return;
-    if (!el || el.classList.contains('opened')) return;
-
-    state.doorOpened = true;
-    el.classList.add('opened');
-
-    var resultEl = document.getElementById('door-result');
-    var msg = doorMessages[doorNum] || '门后是一片空白。';
-    if (resultEl) {
-      resultEl.textContent = msg;
-      resultEl.style.color = 'rgba(180,40,40,0.5)';
-      resultEl.style.fontSize = '14px';
-      resultEl.style.transition = 'color 1s';
-    }
-
-    if (doorNum === 4) {
-      if (resultEl) resultEl.style.color = 'rgba(120,180,120,0.6)';
-      el.classList.add('escape');
-      triggerGlitch();
-      showToast('你找到了通往外界的门。但这是真的吗？');
-    }
-
-    if (doorNum === 6) {
-      triggerGlitch();
-      setTimeout(function() { triggerGlitch(); }, 400);
-      document.body.classList.add('page-shake');
-      setTimeout(function() { document.body.classList.remove('page-shake'); }, 300);
-    }
-
-    setTimeout(function() {
-      document.querySelectorAll('.door-icon').forEach(function(d) {
-        if (d !== el) d.classList.add('opened');
-      });
-    }, 300);
-  }
-
-  document.querySelectorAll('.door-icon').forEach(function(door) {
-    door.addEventListener('click', function() {
-      var doorNum = parseInt(door.getAttribute('data-door'));
-      openDoor(doorNum, door);
-    });
+// 门
+document.querySelectorAll('.door-icon').forEach(function(door) {
+  door.addEventListener('click', function() {
+    openDoor(parseInt(door.getAttribute('data-door')), door);
   });
+});
+console.log('七扇门 绑定OK');
 
-  // ═══════════════════════════════════════
-  //  交互：镜子闪现
-  // ═══════════════════════════════════════
-  var mirrorApparition = document.getElementById('mirror-apparition');
+// 最后一页
+var hiddenPage = document.getElementById('hidden-content');
+if (hiddenPage) { hiddenPage.addEventListener('click', revealLastPage); console.log('hidden-content 绑定OK'); }
 
-  function spawnMirror() {
-    if (isMobile || state.mirrorActive) return;
+// 镜子
+var mirror = document.getElementById('mirror-apparition');
+if (mirror) { mirror.addEventListener('click', function() { dismissMirror(true); }); }
 
-    var edge = Math.floor(Math.random() * 4);
-    var x, y;
-    if (edge === 0) { // 上
-      x = Math.random() * (window.innerWidth - 140);
-      y = -170;
-    } else if (edge === 1) { // 右
-      x = window.innerWidth + 20;
-      y = Math.random() * (window.innerHeight - 200);
-    } else if (edge === 2) { // 下
-      x = Math.random() * (window.innerWidth - 140);
-      y = window.innerHeight + 20;
-    } else { // 左
-      x = -140;
-      y = Math.random() * (window.innerHeight - 200);
+// === 氛围效果 ===
+// 视差
+var docCards = document.querySelectorAll('.doc-card');
+document.addEventListener('mousemove', function(e) {
+  ST.mouseX = e.clientX; ST.mouseY = e.clientY; ST.idleTime = 0;
+  checkMirrorProximity(e.clientX, e.clientY);
+  if (isMobile) return;
+  var cx = e.clientX / window.innerWidth - 0.5;
+  var cy = e.clientY / window.innerHeight - 0.5;
+  docCards.forEach(function(card) {
+    var depth = parseFloat(card.getAttribute('data-depth') || 0.02);
+    card.style.transform = 'rotateX(' + (-cy * depth * 8) + 'deg) rotateY(' + (cx * depth * 8) + 'deg)';
+  });
+});
+
+// 滚动变暗
+window.addEventListener('scroll', function() {
+  var ratio = window.scrollY / (document.body.scrollHeight - window.innerHeight);
+  document.body.classList.toggle('creeping-darkness', ratio > 0.8);
+});
+
+// 影子人影
+var shadowFig = document.getElementById('shadow-figure');
+var shadowVisible = false;
+function spawnShadowFigure() {
+  if (isMobile || shadowVisible) return;
+  var edge = Math.floor(Math.random() * 3), x, y;
+  if (edge === 0) { x = -40 + Math.random() * 60; y = Math.random() * window.innerHeight * 0.8; }
+  else if (edge === 1) { x = window.innerWidth - 40 - Math.random() * 60; y = Math.random() * window.innerHeight * 0.8; }
+  else { x = Math.random() * window.innerWidth; y = window.innerHeight - 60 + Math.random() * 40; }
+  shadowFig.style.left = x + 'px'; shadowFig.style.top = y + 'px';
+  shadowFig.style.transform = 'scaleX(' + (Math.random() > 0.5 ? 1 : -1) + ')';
+  shadowFig.classList.add('visible'); shadowVisible = true;
+  var checkProx = function(e) {
+    if (!shadowVisible) return;
+    if (Math.hypot(e.clientX - x - 40, e.clientY - y - 90) < 250) {
+      shadowFig.classList.add('fleeing'); shadowFig.classList.remove('visible'); shadowVisible = false;
+      document.removeEventListener('mousemove', checkProx);
+      ST.shadowFigureTimer = setTimeout(spawnShadowFigure, Math.random() * 25000 + 15000);
     }
+  };
+  document.addEventListener('mousemove', checkProx);
+  setTimeout(function() {
+    if (shadowVisible) { shadowFig.classList.remove('visible'); shadowVisible = false; document.removeEventListener('mousemove', checkProx); ST.shadowFigureTimer = setTimeout(spawnShadowFigure, Math.random() * 20000 + 10000); }
+  }, 4000 + Math.random() * 3000);
+}
+if (!isMobile) ST.shadowFigureTimer = setTimeout(spawnShadowFigure, 15000);
 
-    mirrorApparition.style.left = x + 'px';
-    mirrorApparition.style.top = y + 'px';
-    mirrorApparition.classList.remove('shattered');
-    mirrorApparition.classList.add('visible');
-    state.mirrorActive = true;
+// 屏幕闪烁
+function scheduleGlitch() {
+  ST.glitchTimer = setTimeout(function() { triggerGlitch(); scheduleGlitch(); }, Math.random() * 30000 + 20000);
+}
+scheduleGlitch();
 
-    // 如果用户不靠近，镜子在8-15秒后自行消失
-    var autoVanish = setTimeout(function() {
-      dismissMirror();
-    }, 8000 + Math.random() * 7000);
-
-    mirrorApparition._autoVanish = autoVanish;
+// 灯光闪烁
+setInterval(function() {
+  if (Math.random() < 0.15) {
+    var lf = document.getElementById('lamp-flicker');
+    if (!lf) return;
+    lf.style.opacity = (Math.random() * 0.1 + 0.03);
+    lf.style.transition = 'opacity ' + (Math.random() * 0.2 + 0.05) + 's';
+    setTimeout(function() { lf.style.opacity = '0'; lf.style.transition = 'opacity 0.3s'; }, 80 + Math.random() * 200);
   }
+}, 5000);
 
-  function checkMirrorProximity(mx, my) {
-    if (!state.mirrorActive) return;
-    var rect = mirrorApparition.getBoundingClientRect();
-    var cx = rect.left + rect.width / 2;
-    var cy = rect.top + rect.height / 2;
-    var dist = Math.sqrt((mx - cx) * (mx - cx) + (my - cy) * (my - cy));
-    if (dist < 180) {
-      // 用户靠近镜子——触发效果后镜子碎裂
-      dismissMirror(true);
+// 文字闪红
+setInterval(function() {
+  var rules = document.querySelectorAll('.rule');
+  if (rules.length) { var r = rules[Math.floor(Math.random() * rules.length)]; r.classList.add('flicker'); setTimeout(function() { r.classList.remove('flicker'); }, 300); }
+}, 8000 + Math.random() * 6000);
+
+// 批注渗红
+setInterval(function() {
+  var notes = document.querySelectorAll('.note');
+  if (notes.length) { var n = notes[Math.floor(Math.random() * notes.length)]; n.classList.add('bleeding'); setTimeout(function() { n.classList.remove('bleeding'); }, 2500); }
+}, 15000);
+
+// 角落文字
+var cornerWatcher = document.getElementById('corner-watcher');
+setInterval(function() {
+  var elapsed = (Date.now() - ST.pageStartTime) / 1000;
+  cornerWatcher.style.color = 'rgba(180,40,40,' + Math.min(0.04 + elapsed * 0.00015, 0.18) + ')';
+}, 30000);
+
+// 低语
+var whisperEl = document.getElementById('whisper-overlay');
+var whispers = ['不要回头', '有人在看着你', '408是空的', '你不是你', '跑', '它知道你在读', '陈伯从来不笑', '你还有几天？', '镜子里的不是你', '嘘——', '第三扇门', '快走'];
+function showWhisper() {
+  if (isMobile) return;
+  whisperEl.textContent = whispers[Math.floor(Math.random() * whispers.length)];
+  whisperEl.style.left = (10 + Math.random() * 70) + '%';
+  whisperEl.style.top = (10 + Math.random() * 70) + '%';
+  whisperEl.style.fontSize = (11 + Math.random() * 8) + 'px';
+  whisperEl.classList.add('active');
+  setTimeout(function() { whisperEl.classList.remove('active'); }, 2500);
+}
+function scheduleWhisper() { ST.whisperTimer = setTimeout(function() { showWhisper(); scheduleWhisper(); }, Math.random() * 30000 + 20000); }
+if (!isMobile) scheduleWhisper();
+
+// 墨迹滴落
+function createInkDrip() {
+  var d = document.createElement('div'); d.className = 'ink-drip';
+  d.style.left = Math.random() * window.innerWidth + 'px';
+  var len = 30 + Math.random() * 120;
+  d.style.setProperty('--drip-length', len + 'px');
+  d.style.setProperty('--drip-end', len + 20 + 'px');
+  d.style.animationDuration = (2 + Math.random() * 4) + 's';
+  document.body.appendChild(d);
+  setTimeout(function() { if (d.parentNode) d.parentNode.removeChild(d); }, 6000);
+}
+function scheduleDrip() { ST.dripTimer = setTimeout(function() { createInkDrip(); scheduleDrip(); }, Math.random() * 18000 + 12000); }
+if (!isMobile) scheduleDrip();
+
+// 闲置检测
+setInterval(function() {
+  ST.idleTime++;
+  if (ST.idleTime > 45 && !isMobile) {
+    cornerWatcher.style.color = 'rgba(180,40,40,0.22)';
+    setTimeout(function() { cornerWatcher.style.color = 'rgba(180,40,40,0.04)'; }, 3000);
+    if (Math.random() < 0.4) triggerGlitch();
+    ST.idleTime = 0;
+  }
+}, 1000);
+
+// F键手电筒
+document.addEventListener('keydown', function(e) {
+  if (e.key !== 'f' && e.key !== 'F') return;
+  ST.flashlightOn = !ST.flashlightOn;
+  var tipEl = document.getElementById('interaction-tip');
+  if (ST.flashlightOn) {
+    document.body.style.filter = 'brightness(1.2)';
+    document.querySelector('.soft-vignette').style.boxShadow = 'inset 0 0 100px rgba(0,0,0,0.3), inset 0 0 40px rgba(0,0,0,0.15)';
+    if (tipEl) tipEl.textContent = '手电筒已打开 —— 再按 F 关闭';
+  } else {
+    document.body.style.filter = '';
+    document.querySelector('.soft-vignette').style.boxShadow = '';
+    if (tipEl) tipEl.textContent = '按 F 键可以开关手电筒  ·  寻找纸条并点击它们';
+  }
+});
+
+// 交互提示
+setTimeout(function() {
+  var tip = document.getElementById('interaction-tip');
+  if (tip) tip.classList.add('show');
+}, 8000);
+
+// === 镜子交互 ===
+var mirrorEl = document.getElementById('mirror-apparition');
+
+function spawnMirror() {
+  if (isMobile || ST.mirrorActive || !mirrorEl) return;
+  var edge = Math.floor(Math.random() * 4), x, y;
+  if (edge === 0) { x = Math.random() * (window.innerWidth - 160); y = -230; }
+  else if (edge === 1) { x = window.innerWidth + 20; y = Math.random() * (window.innerHeight - 240); }
+  else if (edge === 2) { x = Math.random() * (window.innerWidth - 160); y = window.innerHeight + 20; }
+  else { x = -180; y = Math.random() * (window.innerHeight - 240); }
+  mirrorEl.style.left = x + 'px'; mirrorEl.style.top = y + 'px';
+  mirrorEl.classList.remove('shattered'); mirrorEl.classList.add('visible');
+  ST.mirrorActive = true;
+  mirrorEl._autoVanish = setTimeout(function() { dismissMirror(); }, 8000 + Math.random() * 7000);
+}
+
+function checkMirrorProximity(mx, my) {
+  if (!ST.mirrorActive || !mirrorEl) return;
+  var rect = mirrorEl.getBoundingClientRect();
+  if (Math.hypot(mx - rect.left - rect.width / 2, my - rect.top - rect.height / 2) < 200) dismissMirror(true);
+}
+
+function dismissMirror(shattered) {
+  if (!ST.mirrorActive) return;
+  ST.mirrorActive = false;
+  if (mirrorEl._autoVanish) clearTimeout(mirrorEl._autoVanish);
+  if (shattered) { mirrorEl.classList.add('shattered'); triggerGlitch(); showToast('镜子碎了。你避开了它的注视。'); }
+  else { mirrorEl.classList.remove('visible'); }
+  ST.mirrorTimer = setTimeout(spawnMirror, Math.random() * 40000 + 25000);
+}
+
+if (!isMobile) ST.mirrorTimer = setTimeout(spawnMirror, Math.random() * 40000 + 25000);
+
+// === 飘浮粒子 ===
+var pc = document.getElementById('particle-container');
+if (!pc) { pc = document.createElement('div'); pc.id = 'particle-container'; pc.style.cssText = 'position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden;'; document.body.appendChild(pc); }
+for (var i = 0; i < 15; i++) { var p = document.createElement('div'); p.className = 'dust-particle'; var s = Math.random() * 35 + 12; p.style.width = s + 'px'; p.style.height = s + 'px'; p.style.left = Math.random() * 100 + '%'; p.style.animationDuration = (Math.random() * 24 + 16) + 's'; p.style.animationDelay = (Math.random() * 20) + 's'; pc.appendChild(p); }
+for (var j = 0; j < 8; j++) { var ap = document.createElement('div'); ap.className = 'ash-particle'; ap.style.width = (Math.random() * 3 + 1) + 'px'; ap.style.height = (Math.random() * 6 + 4) + 'px'; ap.style.left = Math.random() * 100 + '%'; ap.style.animationDuration = (Math.random() * 28 + 18) + 's'; ap.style.animationDelay = (Math.random() * 22) + 's'; pc.appendChild(ap); }
+
+// 注视微光
+setInterval(function() {
+  docCards.forEach(function(card) {
+    var rect = card.getBoundingClientRect();
+    if (Math.abs(rect.top + rect.height / 2 - window.innerHeight / 2) < rect.height) {
+      card.classList.add('watched');
+      setTimeout(function() { card.classList.remove('watched'); }, 3000);
     }
-  }
+  });
+}, 6000);
 
-  function dismissMirror(shattered) {
-    if (!state.mirrorActive) return;
-    state.mirrorActive = false;
-    if (mirrorApparition._autoVanish) clearTimeout(mirrorApparition._autoVanish);
+// 随机微颤
+function randomPageShake() {
+  if (Math.random() < 0.2) { document.body.classList.add('page-shake'); setTimeout(function() { document.body.classList.remove('page-shake'); }, 300); }
+  setTimeout(randomPageShake, Math.random() * 35000 + 25000);
+}
+setTimeout(randomPageShake, 30000);
 
-    if (shattered) {
-      mirrorApparition.classList.add('shattered');
-      triggerGlitch();
-      showToast('镜子碎了。你避开了它的注视。');
-    } else {
-      mirrorApparition.classList.remove('visible');
-    }
-
-    // 重新调度
-    scheduleMirror();
-  }
-
-  // 点击镜子也会碎裂
-  if (mirrorApparition) {
-    mirrorApparition.addEventListener('click', function() {
-      dismissMirror(true);
-    });
-  }
-
-  function scheduleMirror() {
-    if (mirrorTimer) clearTimeout(mirrorTimer);
-    mirrorTimer = setTimeout(function() {
-      spawnMirror();
-    }, Math.random() * 40000 + 25000);
-  }
-
-  if (!isMobile) scheduleMirror();
-
-  // ═══════════════════════════════════════
-  //  Toast 提示
-  // ═══════════════════════════════════════
-  function showToast(msg) {
-    var toast = document.getElementById('found-note-toast');
-    if (!toast) return;
-    toast.textContent = msg;
-    toast.classList.add('show');
-    setTimeout(function() {
-      toast.classList.remove('show');
-    }, 3500);
-  }
-
-  // ═══════════════════════════════════════
-  //  页面随机微颤
-  // ═══════════════════════════════════════
-  function randomPageShake() {
-    if (Math.random() < 0.2) {
-      document.body.classList.add('page-shake');
-      setTimeout(function() { document.body.classList.remove('page-shake'); }, 300);
-    }
-    setTimeout(randomPageShake, Math.random() * 35000 + 25000);
-  }
-  setTimeout(randomPageShake, 30000);
-
-  // ═══════════════════════════════════════
-  //  飘浮粒子
-  // ═══════════════════════════════════════
-  var particleContainer = document.getElementById('particle-container');
-  if (!particleContainer) {
-    particleContainer = document.createElement('div');
-    particleContainer.id = 'particle-container';
-    particleContainer.style.cssText = 'position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden;';
-    document.body.appendChild(particleContainer);
-  }
-
-  for (var i = 0; i < 15; i++) {
-    var p = document.createElement('div');
-    p.className = 'dust-particle';
-    var size = Math.random() * 35 + 12;
-    p.style.width = size + 'px';
-    p.style.height = size + 'px';
-    p.style.left = Math.random() * 100 + '%';
-    p.style.animationDuration = (Math.random() * 24 + 16) + 's';
-    p.style.animationDelay = (Math.random() * 20) + 's';
-    particleContainer.appendChild(p);
-  }
-
-  for (var j = 0; j < 8; j++) {
-    var ap = document.createElement('div');
-    ap.className = 'ash-particle';
-    var w = Math.random() * 3 + 1;
-    ap.style.width = w + 'px';
-    ap.style.height = (Math.random() * 6 + 4) + 'px';
-    ap.style.left = Math.random() * 100 + '%';
-    ap.style.animationDuration = (Math.random() * 28 + 18) + 's';
-    ap.style.animationDelay = (Math.random() * 22) + 's';
-    particleContainer.appendChild(ap);
-  }
-
-  // ═══════════════════════════════════════
-  //  文档被"注视"的微光效果
-  // ═══════════════════════════════════════
-  setInterval(function() {
-    docCards.forEach(function(card) {
-      var rect = card.getBoundingClientRect();
-      var centerY = rect.top + rect.height / 2;
-      if (Math.abs(centerY - window.innerHeight / 2) < rect.height) {
-        card.classList.add('watched');
-        setTimeout(function() { card.classList.remove('watched'); }, 3000);
-      }
-    });
-  }, 6000);
-
-  // ═══════════════════════════════════════
-  //  控制台彩蛋
-  // ═══════════════════════════════════════
-  console.log('%c春山疗养院 %c档案系统 %cv3.0',
-    'font-size:20px;color:#8b1a1a;letter-spacing:3px;',
-    'font-size:12px;color:#5a4030;',
-    'font-size:10px;color:#aaa;');
-  console.log('%c你在看什么？你应该去读文件，而不是盯着控制台。', 'color:#8b7a6a;font-style:italic;');
-  console.log('%c试试点击纸条、打开门、寻找镜子。互动元素分散在各处。', 'color:rgba(139,26,26,0.5);font-size:11px;');
-  console.log('%c……或者，你已经不确定自己是不是自己了？', 'color:rgba(139,26,26,0.35);font-size:10px;');
-
-})();
+// 控制台
+console.log('%c春山疗养院 %c档案系统 %cv3.1', 'font-size:20px;color:#8b1a1a;', 'font-size:12px;color:#5a4030;', 'font-size:10px;color:#aaa;');
+console.log('%c交互元素已就绪：纸条 · 七扇门 · 敲门 · 镜子 · 应急措施', 'color:rgba(139,26,26,0.5);font-size:11px;');
+console.log('%c查看 DOMContentLoaded 日志确认监听绑定状态', 'color:#8b7a6a;');
 </script>
 
 </body>
