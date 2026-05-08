@@ -1,0 +1,817 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>春山疗养院 - 档案</title>
+<style>
+  :root {
+    --desk: #c8bcab;
+    --paper-official: #f7f2e6;
+    --paper-staff: #f2eddd;
+    --paper-security: #eee8d5;
+    --paper-diary: #faf5e8;
+    --paper-emergency: #f5efe0;
+    --text: #2c2416;
+    --text-light: #4a3f32;
+    --red: #8b1a1a;
+    --red-light: #b54040;
+    --ink: #1a1410;
+    --border: #c4b89a;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: linear-gradient(175deg, #d9cebd 0%, #c8bcab 30%, #d4c8b4 60%, #c0b49d 100%);
+    background-attachment: fixed;
+    color: var(--text);
+    font-family: "Noto Serif SC", "STSong", "SimSun", "Songti SC", serif;
+    min-height: 100vh;
+    padding: 40px 20px 60px;
+    position: relative;
+    overflow-x: hidden;
+    line-height: 1.8;
+  }
+
+  /* 桌面纹理 */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+    background:
+      radial-gradient(ellipse at 20% 30%, rgba(139,26,26,0.03) 0%, transparent 50%),
+      radial-gradient(ellipse at 75% 60%, rgba(80,40,0,0.04) 0%, transparent 50%),
+      radial-gradient(ellipse at 50% 80%, rgba(60,20,0,0.03) 0%, transparent 60%);
+    opacity: 0.6;
+  }
+
+  /* 档案容器 */
+  .dossier {
+    position: relative;
+    z-index: 1;
+    max-width: 820px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 32px;
+  }
+
+  /* 总封面 */
+  .dossier-cover {
+    text-align: center;
+    padding: 48px 40px;
+    background: linear-gradient(180deg, #f8f3e8 0%, #efe8d5 100%);
+    border: 1px solid var(--border);
+    box-shadow: 0 2px 24px rgba(0,0,0,0.08), 0 0 60px rgba(139,26,26,0.04);
+    position: relative;
+  }
+  .dossier-cover::after {
+    content: '';
+    position: absolute;
+    inset: 8px;
+    border: 1px solid rgba(139,26,26,0.15);
+    pointer-events: none;
+  }
+  .dossier-cover .stamp-large {
+    display: inline-block;
+    width: 90px;
+    height: 90px;
+    border: 3px solid rgba(139,26,26,0.45);
+    border-radius: 50%;
+    font-size: 12px;
+    color: rgba(139,26,26,0.5);
+    letter-spacing: 2px;
+    line-height: 1.5;
+    transform: rotate(-15deg);
+    margin-bottom: 20px;
+    padding: 16px 0;
+  }
+  .dossier-cover h1 {
+    font-size: 28px;
+    letter-spacing: 6px;
+    color: var(--ink);
+    font-weight: normal;
+    margin-bottom: 8px;
+  }
+  .dossier-cover .sub {
+    font-size: 13px;
+    letter-spacing: 3px;
+    color: var(--red);
+    margin-bottom: 4px;
+  }
+  .dossier-cover .meta {
+    font-size: 11px;
+    color: #8b7a6a;
+    letter-spacing: 2px;
+    margin-top: 16px;
+  }
+
+  /* 通用文档卡片 */
+  .doc-card {
+    background: var(--paper-official);
+    padding: 48px 50px;
+    box-shadow: 0 2px 16px rgba(0,0,0,0.06), 0 0 40px rgba(139,26,26,0.03);
+    position: relative;
+    border: 1px solid rgba(180,160,130,0.3);
+  }
+  .doc-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: url("data:image/svg+xml,%3Csvg width='300' height='300' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.025'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 0;
+  }
+  .doc-card > * { position: relative; z-index: 1; }
+
+  /* 不同文档的纸张色调 */
+  .doc-staff { background: linear-gradient(180deg, #f5efe0 0%, #f0e9d6 50%, #f5efe0 100%); }
+  .doc-security { background: linear-gradient(180deg, #f3ecda 0%, #ede4cf 50%, #f2ebd8 100%); }
+  .doc-diary { background: linear-gradient(180deg, #fdf8ee 0%, #f9f2e0 50%, #fcf6ea 100%); }
+  .doc-emergency { background: linear-gradient(180deg, #f8f3e5 0%, #f5eedc 50%, #f7f2e4 100%); border: 2px dashed rgba(139,26,26,0.2); }
+
+  /* 文档页眉 */
+  .doc-header {
+    text-align: center;
+    border-bottom: 2px double rgba(139,26,26,0.4);
+    padding-bottom: 20px;
+    margin-bottom: 28px;
+  }
+  .doc-header .doc-label {
+    font-size: 11px;
+    letter-spacing: 4px;
+    color: #7a5a3a;
+    margin-bottom: 6px;
+  }
+  .doc-header h2 {
+    font-size: 22px;
+    letter-spacing: 4px;
+    font-weight: normal;
+    color: var(--ink);
+  }
+  .doc-header .doc-stamp {
+    font-size: 10px;
+    color: rgba(139,26,26,0.45);
+    letter-spacing: 2px;
+    margin-top: 6px;
+  }
+
+  /* 分类标题 */
+  .section-title {
+    font-size: 17px;
+    letter-spacing: 2px;
+    color: var(--ink);
+    border-left: 3px solid var(--red);
+    padding-left: 12px;
+    margin: 28px 0 16px;
+    font-weight: normal;
+  }
+
+  /* 规则条目 */
+  .rule {
+    margin-bottom: 12px;
+    padding-left: 22px;
+    text-indent: -22px;
+    line-height: 2.1;
+    font-size: 15px;
+    color: #2c2416;
+  }
+  .rule .num {
+    color: var(--red);
+    font-weight: bold;
+    margin-right: 2px;
+  }
+  .rule em {
+    font-style: normal;
+    font-weight: bold;
+    color: #1a0a0a;
+  }
+
+  /* 警告框 */
+  .warning-box {
+    background: rgba(139,26,26,0.04);
+    border: 1px solid rgba(139,26,26,0.15);
+    border-left: 4px solid var(--red);
+    padding: 16px 20px;
+    margin: 22px 0;
+    font-size: 14px;
+    line-height: 2.1;
+    letter-spacing: 0.5px;
+  }
+  .warning-box strong {
+    color: var(--red);
+  }
+
+  /* 子规则（缩进的补充说明） */
+  .sub-rule {
+    margin: 4px 0 8px 28px;
+    font-size: 14px;
+    line-height: 2;
+    color: #3a2a18;
+    border-left: 2px dotted rgba(139,26,26,0.2);
+    padding-left: 12px;
+  }
+
+  /* 被划掉 */
+  .strike {
+    text-decoration: line-through;
+    text-decoration-color: rgba(180,40,40,0.6);
+    text-decoration-thickness: 2px;
+    color: #6b5040;
+  }
+
+  /* 手写批注 */
+  .note {
+    font-size: 13.5px;
+    color: #7a2a2a;
+    font-style: italic;
+    margin: 4px 0 4px 24px;
+    padding: 4px 10px;
+    border-left: 2px dotted rgba(139,26,26,0.3);
+    line-height: 2;
+    position: relative;
+  }
+  .note::before { content: '"'; position: absolute; left: -14px; top: -2px; font-size: 18px; color: rgba(139,26,26,0.35); }
+  .note::after { content: '"'; position: absolute; right: -2px; bottom: -6px; font-size: 18px; color: rgba(139,26,26,0.35); }
+
+  /* 撕裂页面区域 */
+  .torn-section {
+    margin: 24px 0;
+    padding: 22px 28px;
+    background: rgba(139,26,26,0.02);
+    border-top: 2px dashed rgba(139,26,26,0.2);
+    border-bottom: 2px dashed rgba(139,26,26,0.2);
+    line-height: 2.2;
+    font-size: 14px;
+    color: #4a3020;
+  }
+  .torn-section .blacked {
+    display: inline-block;
+    background: #1a1a1a;
+    color: #1a1a1a;
+    padding: 0 8px;
+    margin: 0 2px;
+    cursor: default;
+    transition: all 0.25s;
+    user-select: none;
+  }
+  .torn-section .blacked:hover {
+    background: #4a0000;
+    color: #e8d8d0;
+  }
+
+  /* 手写便签 */
+  .note-card {
+    background: linear-gradient(135deg, #fffbee 0%, #fef7e4 100%);
+    border: 1px solid #d4c5a0;
+    padding: 24px 26px;
+    margin: 22px 0;
+    font-size: 14px;
+    line-height: 2.2;
+    color: #3a2810;
+    box-shadow: 2px 3px 10px rgba(0,0,0,0.08);
+    position: relative;
+    letter-spacing: 0.5px;
+  }
+  .note-card::after {
+    content: '';
+    position: absolute;
+    top: -10px;
+    left: 40px;
+    width: 44px;
+    height: 14px;
+    background: rgba(200,180,140,0.45);
+    border-radius: 2px;
+  }
+  .note-card .diary-entry {
+    margin-bottom: 10px;
+    line-height: 2.1;
+  }
+  .note-card .diary-date {
+    font-weight: bold;
+    color: #5a3a20;
+    letter-spacing: 1px;
+  }
+
+  /* 最后一页 - 隐藏文字 */
+  .hidden-page {
+    position: relative;
+    min-height: 400px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 50px 40px;
+    cursor: default;
+  }
+  .hidden-page .hidden-title {
+    font-size: 16px;
+    letter-spacing: 3px;
+    color: rgba(0,0,0,0.2);
+    margin-bottom: 30px;
+    transition: color 0.6s;
+  }
+  .hidden-page .hidden-text {
+    color: rgba(0,0,0,0.06);
+    font-size: 14px;
+    line-height: 2.3;
+    max-width: 600px;
+    transition: color 0.8s;
+    user-select: none;
+  }
+  .hidden-page:hover .hidden-text,
+  .hidden-page.revealed .hidden-text {
+    color: #2c2416;
+    user-select: auto;
+  }
+  .hidden-page:hover .hidden-title,
+  .hidden-page.revealed .hidden-title {
+    color: var(--red);
+  }
+  .hidden-page .reveal-hint {
+    font-size: 10px;
+    color: rgba(0,0,0,0.12);
+    letter-spacing: 2px;
+    margin-top: 28px;
+  }
+  .hidden-page:hover .reveal-hint { color: rgba(139,26,26,0.4); }
+
+  /* 最后一页内的警告 */
+  .hidden-page .final-warning {
+    margin-top: 28px;
+    padding: 16px 20px;
+    border: 1px solid rgba(139,26,26,0.2);
+    font-size: 13px;
+    line-height: 2;
+    opacity: 0;
+    transition: opacity 0.8s;
+    color: #4a2020;
+  }
+  .hidden-page:hover .final-warning,
+  .hidden-page.revealed .final-warning {
+    opacity: 1;
+  }
+
+  /* 页脚 */
+  .doc-footer {
+    text-align: center;
+    border-top: 1px solid rgba(139,119,80,0.2);
+    padding-top: 18px;
+    margin-top: 20px;
+    font-size: 10px;
+    color: #8b7a6a;
+    letter-spacing: 2px;
+  }
+
+  /* 文档间分隔 */
+  .doc-separator {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    color: rgba(139,26,26,0.25);
+    font-size: 11px;
+    letter-spacing: 3px;
+    padding: 0 10px;
+  }
+  .doc-separator::before,
+  .doc-separator::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(139,119,80,0.25), transparent);
+  }
+
+  /* 环境粒子 */
+  .dust-particle {
+    position: fixed;
+    pointer-events: none;
+    z-index: 0;
+    background: radial-gradient(circle, rgba(180,150,120,0.25) 0%, transparent 70%);
+    border-radius: 50%;
+    animation: dustFloat linear infinite;
+  }
+  @keyframes dustFloat {
+    0% { transform: translateY(105vh) translateX(0) scale(0); opacity: 0; }
+    10% { opacity: 0.5; }
+    85% { opacity: 0.4; }
+    100% { transform: translateY(-5vh) translateX(30px) scale(1.2); opacity: 0; }
+  }
+
+  /* 响应式 */
+  @media (max-width: 650px) {
+    .doc-card { padding: 28px 20px; }
+    .dossier-cover { padding: 32px 20px; }
+    .dossier-cover h1 { font-size: 20px; letter-spacing: 3px; }
+    .rule { font-size: 14px; }
+    .note-card { padding: 18px 16px; }
+    .hidden-page { padding: 30px 20px; }
+  }
+
+  /* 底部暗角 - 比原来淡很多 */
+  .soft-vignette {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 2;
+    box-shadow: inset 0 0 120px rgba(0,0,0,0.15), inset 0 0 40px rgba(0,0,0,0.08);
+  }
+
+  /* 微妙的闪烁 */
+  @keyframes subtleShimmer {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.97; }
+  }
+  .doc-card {
+    animation: subtleShimmer 12s ease-in-out infinite;
+  }
+</style>
+</head>
+<body>
+
+<div class="soft-vignette"></div>
+
+<!-- 桌面飘浮的尘埃粒子 -->
+<div id="dust-container"></div>
+
+<div class="dossier">
+
+  <!-- ═══════════════ 档案封面 ═══════════════ -->
+  <div class="dossier-cover">
+    <div class="stamp-large">档案<br>047<br>机密</div>
+    <h1>春 山 疗 养 院</h1>
+    <p class="sub">内部文件汇编 · 非正式整理</p>
+    <p style="font-size:13px; color:#5a4030; letter-spacing:2px; margin-top:8px;">SPRING MOUNTAIN SANATORIUM</p>
+    <p class="meta">以下文件来自不同来源——患者手册、员工守则残页、安保备忘录、患者日记。<br>它们有些相互矛盾。但每一份都是真实的。区别在于：<strong>它们写给不同的人看。</strong></p>
+    <p style="font-size:10px; color:rgba(139,26,26,0.3); letter-spacing:3px; margin-top:16px;">档案整理人不详 · 日期不详 · 请勿外传</p>
+  </div>
+
+  <!-- ═══════════════ 文档一：患者入院须知 ═══════════════ -->
+  <div class="doc-card">
+    <div class="doc-header">
+      <div class="doc-label">文档一</div>
+      <h2>患者入院须知</h2>
+      <div class="doc-stamp">春山疗养院行政办公室 · 第二十四版</div>
+    </div>
+
+    <p style="line-height:2.2; text-indent:2em; margin-bottom:14px; font-size:15px;">
+      欢迎您选择春山疗养院。我们坐落在海拔一千二百米的原始针叶林带之中，远离城市喧嚣，致力于为每一位入住者提供安静、有序的康复环境。在您办理入住手续时，前台工作人员已将本手册交到您手中。请您务必在进入房间之前，逐字逐句阅读以下全部内容。
+    </p>
+    <p style="line-height:2.2; text-indent:2em; margin-bottom:20px; font-size:15px;">
+      这不是一份普通的服务指南。您的安全——<strong>以及您作为"您自己"的存续</strong>——取决于您对每一条规则的严格遵守。请理解：本手册中的每一条规则都有其存在的理由，即使您暂时不理解其中的某些条款。在疗养院内，"不理解但遵守"永远比"理解后再遵守"更安全。
+    </p>
+
+    <div class="warning-box">
+      <strong>▎首要警告：关于镜子</strong><br>
+      疗养院内没有镜子。如果您在任何地方看到了镜子——包括但不限于走廊转角、餐厅墙壁、浴室、病房、楼梯间——请不要看它。不要看镜中的任何东西。立即转身，朝相反方向走至少二十步，然后闭上眼睛，从一数到三十。数完之后，原路返回。如果镜子已经消失，一切正常。如果镜子还在那里——<strong>并且您能看清镜中的内容</strong>——请冷静观察：镜中是否有您的倒影？<br>
+      &emsp;• 如果镜中有您的倒影：您目前是安全的。立即前往护士站，告诉值班护士"我有些头晕"。护士会给您一杯温水。喝掉它。在护士站坐十分钟。之后返回房间，当天不要再离开。<br>
+      &emsp;• 如果镜中没有您的倒影：您的状况已经超出了本须知的常规保护范围。请翻阅本手册最后一页。如果最后一页上有字——请仔细阅读并照做。如果最后一页是空白的——<strong>祝您好运。</strong>
+    </div>
+
+    <h3 class="section-title">第一章 · 日常作息</h3>
+
+    <p class="rule"><span class="num">第1条.</span> 每日早晨<em>七点整</em>，护士会进入您的房间测量体温和血压。请确保您在七点之前已经醒来，并且<em>面朝房门侧卧</em>。护士不会叫醒您。如果您在护士进入时尚未醒来，护士会自行离开，并在您的档案上做一个标记。我们不希望您的档案上有任何标记。连续三天有标记的患者，将被转入<em>408号房间</em>进行"深度观察"。</p>
+    <p class="note">我不知道408里有什么，但所有被转进去的人，后来我都再也没在餐厅见过。——407号房某位入住者</p>
+
+    <p class="rule"><span class="num">第2条.</span> 三餐统一在餐厅进行。早餐 7:30，午餐 12:00，晚餐 18:00。从您的房间到餐厅，必须经过一条长约四十米的走廊。走廊两侧共有<em>七扇门</em>。这七扇门<em>永远不要打开</em>。无论您听到门后传来什么声音——包括但不限于呼唤您的名字、您已故亲人的声音、您自己的声音、或者完全的、不自然的寂静——都不要开门，不要回应，不要在门前停留超过三秒。</p>
+    <div class="sub-rule">补充：如果您发现七扇门中的某一扇是敞开的——这在任何时候都不应该发生——请不要随意进入。前三扇门通向危险的地方。后四扇门中有一扇通向外界。但我们不确定是哪一扇。它每次都不一样。如果您必须选择一扇（例如您在被追赶），请选离您最近的那扇敞开的门。错误的门通向地下室。正确的门通向森林。没有第三种可能。</div>
+
+    <p class="rule"><span class="num">第3条.</span> 午饭后至下午两点为午休时间。午休期间，请待在您的房间内，拉上窗帘，<em>不要看向窗外</em>。如果您在午休期间听到外面有鸟鸣声——注意，春山疗养院位于海拔一千二百米的针叶林带，<em>这里没有鸟</em>。从来没有。请用枕头捂住耳朵，直到鸟鸣声停止。通常不会超过三分钟。如果超过三分钟——说明鸟鸣声不是从外面传来的。它来自您房间的内部。不要睁开眼睛。不要寻找声音的来源。继续捂住耳朵，直到护士站的广播响起。广播每天下午两点准时播放。</p>
+
+    <p class="rule"><span class="num">第4条.</span> 傍晚五点至六点之间，疗养院会播放一段轻音乐。这是"散步时间"。您可以自由在院内散步，但必须在天色完全暗下来之前回到室内。散步时请注意：</p>
+    <div class="sub-rule">a) 如果您在东侧山坡上看到一座白色凉亭——我们没有任何凉亭。处理方法同镜子。</div>
+    <div class="sub-rule">b) 如果您遇到其他穿浅蓝色病号服的患者——可以交谈。话题仅限：天气、食物、音乐。不要谈论您的房间号、您的真实姓名、您来这里的原因、或您昨晚是否做了梦。</div>
+    <div class="sub-rule">c) 如果您遇到一个穿<em>深蓝色</em>病号服（而非浅蓝色）的人——他不是患者，不是工作人员，他什么都不是。不要看他。转身走回室内。如果他叫您的名字，不要回头，不要跑。正常步伐走回室内即可。</div>
+
+    <p class="rule"><span class="num">第5条.</span> 晚上九点熄灯。熄灯后请保持安静。如果您听到隔壁房间传来敲墙声——<em>永远不要敲回去</em>。那不是其他患者在试图与您交流。隔壁的房间——408——是空的。一直都是空的。以后也会是空的。无论敲墙声的节奏是什么——三下、四下、或一段您熟悉的旋律——都不要回应。它只是在确认您是否还在。<em>如果您不回应，它无法确定您的位置。</em></p>
+    <div class="sub-rule">但如果您已经回应了：比如您敲了三下，它回了四下——请立刻停止。接下来它会开始模仿您的节奏。之后的一小时内，您可能会听到墙那边有人用<em>您的嗓音</em>说话。它说的内容不重要。它只是在练习。用被子蒙住头。不要听。希望它明天会忘记。</div>
+    <p class="note">我没有忍住。我敲回去了。三下。那边回了四下。就像是有意要比我多一下。不管怎么敲，它永远比我多一下。后来我试过敲两下——那边回了三下。敲五下——回了六下。它在学我。它每一次都比上一次更像我的节奏。——407号房日记，第三天</p>
+
+    <h3 class="section-title">第二章 · 关于其他入住者</h3>
+
+    <p class="rule"><span class="num">第6条.</span> 正常的患者穿着<em>浅蓝色</em>病号服。您可以与他们正常交流。但请注意：即使是正常的患者，知道的真相也未必比您多。有些人在疗养院住了很久，已经分不清哪些是规则、哪些是自己的幻觉。不要试图与任何人讨论本须知的条款。不要试图验证规则是否真实。独自遵守规则，是更安全的选择。</p>
+
+    <p class="rule"><span class="num">第7条.</span> 如果您看到穿着<em>白色病号服</em>的人——他们不是正常的患者。不要主动搭话。不要直视他们超过两秒。如果他们主动与您交流，可以简短回答，但话题仅限于天气和食物。不要透露您的真实姓名、房间号或任何个人信息。不要接受他们递给您的任何东西。吃完您的饭，安静地离开。</p>
+    <div class="sub-rule">白衣人的本质：他们正在<em>学习如何成为一个人</em>。每一个白衣人，都对应着一个曾经住在本院、现在已不再是他自己的患者。他们拥有原主的记忆、声音、外貌和一部分行为模式。但他们尚未完成"学习"。当白衣人学习完成，它会穿上浅蓝色病号服，而原来的那个人——您不会想知道的。</div>
+
+    <p class="rule"><span class="num">第8条.</span> 如果您与一位白衣患者持续交谈超过三分钟，您可能会开始觉得他"非常熟悉"、"像是老朋友"、"仿佛认识了一辈子"。这是正常的心理反应——人类大脑在面对完美的模仿时会自动填补熟悉感。<em>但它不是真的。</em>您所感受到的"亲切"，恰恰是它正在学习您的思维方式的证据。立刻结束对话，前往护士站，告诉值班护士"我感到头晕"。护士会给您一杯温水。喝掉它。在护士站坐十分钟。不要回头看您刚才说话的那个人。</p>
+    <div class="sub-rule">注意：如果您在前往护士站的路上，忽然不记得您为什么要去护士站——不要停下来回忆。继续走。走到护士站坐下。水杯放在您面前时，您会想起来的。</div>
+
+    <p class="rule"><span class="num">第9条.</span> 任何患者——无论穿着什么颜色的衣服——都不应该在<em>午夜零点到凌晨四点之间</em>出现在您的房门外。如果在这个时间段您听到了敲门声，并且门外的人声称是护士、医生或工作人员——<em>它不是</em>。真正的夜班护士使用对讲系统，从不亲自敲门。不要出声。不要开灯。屏住呼吸。保持完全静止。它会离开的。</p>
+    <div class="sub-rule">如果敲门持续超过五分钟，或者门外开始用<em>您认识的人的声音</em>说话——您母亲的声音、您配偶的声音、或者您最亲密的朋友的声音——说明您已经被深度标记。您有一个选择：打开门。但您必须清楚地知道，一旦打开门，门外的东西会用您最爱的人的脸看着您。它会微笑。它会说您最想听的话。它会邀请您跟它走。如果您跟它走，您会变成白色病号服。但如果您能直视它的眼睛，坚定地说"你不是真的。我知道你是谁"——它会消失。您只有一次机会说这句话。而且您必须<em>真心相信</em>。一丝一毫的动摇都会让它失效。</div>
+
+    <h3 class="section-title">第三章 · 工作人员识别</h3>
+
+    <p class="rule"><span class="num">第10条.</span> 所有正式护士佩戴<em>银色胸牌</em>，上有姓名和工号。胸牌在光线下会呈现微弱的<em>蓝色反光</em>。如果一位"护士"的胸牌是哑光的、或反光为绿色——她不是护士。不要接受她递来的任何东西。不要让她触碰您。礼貌地表示您需要去洗手间，然后走到人多的地方去。</p>
+
+    <p class="rule"><span class="num">第11条.</span> 护士长姓张，女性，约四十五岁，短发，戴银色细框眼镜。她是您可以<em>完全信任</em>的人。如果您遇到紧急情况——镜子在追您、白衣人在跟踪您、或午夜敲门持续不停——可以直接找张护士长。她会帮助您。但请注意：张护士长<em>只上白班</em>。如果您在晚上看到"张护士长"——那不是她。处理方法同第9条。</p>
+
+    <p class="rule"><span class="num">第12条.</span> 本院有一位清洁工，名叫<em>陈伯</em>，男性，约六十岁，花白头发，右腿微跛。陈伯是个沉默寡言的人。他从来不笑。如果您看到陈伯对您笑——那不是陈伯。不要与他交谈。不要跟随他去任何地方。立即走开。</p>
+    <div class="sub-rule">陈伯只上白班。如果您在<em>日落之后</em>看到陈伯——<span class="strike">那不是陈伯。不要与他有任何接触。</span><strong style="color:#8b1a1a;">跑。不要跑向您的房间。不要跑向护士站。跑向外面的树林。在树林里待到天亮。天亮之后从正门回来。前台不会问您任何问题。您昨晚从未离开过房间。记住这一点。</strong></div>
+    <p class="note">这一条被划掉又重写了。原来的版本——被划掉的那部分——明显在说谎。但重写的人是谁？为什么新的版本是对的？以及——为什么这条规则会在患者手册里？患者手册不应该是"官方"的吗？</p>
+
+    <div class="sub-rule">补充——关于在森林过夜：森林里没有鸟。如果您听到了鸟鸣声，处理方法同第3条。森林里也没有镜子。如果您在森林中看到了镜子——说明您已经不在森林里了。您可能已经走回了疗养院的范围。不要相信您看到的。继续向树木最密集的方向走。天亮之后找到树干上刻着箭头的那棵树，跟着箭头走，就能走回正门。</div>
+
+    <p class="rule"><span class="num">第13条.</span> 您的主治医师是<em>周文渊</em>医生。男性，约四十岁，戴黑色方框眼镜，左眉上方有一颗小痣。请记住这些特征。真正的周医生<em>只在周二、周四、周六查房</em>。如果您在周一、周三、周五、周日见到了"周医生"——他不是。不要在他的任何文件上签字。告诉他您需要再考虑一下，然后离开他的办公室。真正的周医生会在下一个查房日来看您。</p>
+
+    <p class="rule"><span class="num">第14条.</span> 如果您需要服药，护士会给您药片和一杯水。药片应该是<em>白色圆形</em>，上面没有任何刻印。如果药片是其他颜色、其他形状、或上面有刻印——不要服用。告诉护士"我今天已经吃过药了"。护士会检查记录然后离开。半小时后，真正的护士会重新给您送药。</p>
+
+    <h3 class="section-title">第四章 · 关于出院</h3>
+
+    <p class="rule"><span class="num">第15条.</span> 出院需要主治医师签字。请确保为您签字的是真正的周文渊医生（参照第13条的特征）。签字时请确认以下事项：</p>
+    <div class="sub-rule">a) 您的手是您自己的手。应该能数出五根手指。不应多于五根，也不应少于五根。手背上的皮肤纹理应该是您熟悉的纹路。</div>
+    <div class="sub-rule">b) 您的签名笔迹应与入住时登记的笔迹一致。如果不一致——即使您"感觉"那就是您的签名——不要签字。</div>
+    <div class="sub-rule">c) 您能看到自己的影子。如果看不到——不要签字。不要抬头。安静地放下笔，走回房间。锁门。等待。</div>
+
+    <p class="rule"><span class="num">第16条.</span> 出院确认书上有一个问题："<em>您确定您现在仍然是您自己吗？</em>"请认真思考这个问题。如果您的答案是"是"——请签字。如果您有一丝一毫的犹豫——请告诉护士您需要再住一段时间。护士不会感到意外。这说明不是第一次发生了。</p>
+
+    <p class="rule"><span class="num">第17条.</span> 您的最长住院时间为<em>十四天</em>。如果您已经住院超过十四天仍未出院——说明您或者已经被深度标记，或者已经不再完全是您自己了。您自己可能都没有意识到这一点。请务必在第十四天之前完成出院。</p>
+
+    <div class="warning-box">
+      <strong>▎最后的提醒：</strong>本手册的最后一页标有"应急措施"。在您尚未看到镜子、尚未见到白衣人、尚未听到午夜敲门声之前，最后一页对您而言应该是<strong>空白的</strong>。如果您现在翻到最后一页，看到了文字——那不是给现在的您看的。合上手冊。不要读。知道太多，在错误的时机，本身就会加速标记过程。当您真正需要它的时候，文字自然会显现。
+    </div>
+
+    <div class="doc-footer">DOCUMENT NO. CS-047-2024 · 仅限内部使用 · 请勿带离疗养院</div>
+  </div>
+
+  <div class="doc-separator">※ ※ ※</div>
+
+  <!-- ═══════════════ 文档二：护理人员工作手册（节选） ═══════════════ -->
+  <div class="doc-card doc-staff">
+    <div class="doc-header">
+      <div class="doc-label">文档二</div>
+      <h2>护理人员工作手册</h2>
+      <div class="doc-stamp">（节选 · 残页 · 被从档案室撕下 · 发现于407号房间床垫夹层）</div>
+    </div>
+
+    <p style="font-size:13px; color:#6b5040; text-align:center; letter-spacing:1px; margin-bottom:20px; border-bottom:1px dashed rgba(139,26,26,0.2); padding-bottom:14px;">
+      【封面印有：内部文件 · 仅限护理部 · 编号047 · 不得带离档案室 · 违者开除】
+    </p>
+
+    <p class="rule"><span class="num">第2条.</span> 如果患者询问关于镜子的问题，标准回答是："本院没有镜子。您可能是看错了。"<em>不得以任何方式承认镜子的存在。</em>如果患者坚持说看到了镜子，在患者档案上做标记"V-3"，并将档案转交安保部。</p>
+
+    <p class="rule"><span class="num">第5条.</span> 每日早晨七点查房。如果患者已醒来并面朝房门侧卧——正常记录。如果患者尚未醒来——在档案上做标记"S-1"。<em>连续三次S-1标记的患者，需转至408号房间进行"深度观察"。</em>转房手续在夜班进行。不要提前通知患者。不要在白天讨论408号房的患者。</p>
+
+    <p class="rule"><span class="num">第7条.</span> 走廊的七扇门必须始终保持关闭。如果发现任何一扇门处于敞开状态——<em>不要靠近。不要向门内看。</em>通过对讲机通知安保部。安保部会派人处理。如果看到有患者走向敞开的门——不要阻止他们。记录门牌号和患者房间号。这是"必要的数据采集"。</p>
+    <p class="note">不阻止患者走进危险的门——这叫"数据采集"？他们在拿我们做实验。——407号房日记，第五天</p>
+
+    <p class="rule"><span class="num">第9条.</span> 夜班护士（22:00-06:00）工作守则：</p>
+    <div class="sub-rule">a) 所有夜班护士<em>通过对讲系统</em>与患者沟通。不得以任何理由亲自前往患者房间。</div>
+    <div class="sub-rule">b) 如果对讲系统中听到患者的呼救——确认患者房间号，在值班日志上记录，<em>不要采取任何行动</em>。在0:00-4:00之间，对讲系统中传来的声音不可信。</div>
+    <div class="sub-rule">c) 如果您在对讲系统中听到了<em>您自己的声音</em>——立刻离开护士站。前往一楼大厅等待十五分钟。之后返回。如果对讲系统已恢复正常，继续值班。如果未恢复——打电话给安保部，说"今晚有雾"，然后立刻下班。不要等接班的人。</div>
+    <div class="sub-rule">d) 0:00至4:00之间，不要离开护士站。不要看向走廊尽头的窗户。窗外应该是一片彻底的黑暗。如果看到了任何光亮——月光、星光、或像手电筒的光——<em>低头看桌面</em>，直到光亮消失。</div>
+
+    <p class="rule"><span class="num">第12条.</span> 408号房间管理规定：</p>
+    <div class="sub-rule">a) 408号房间的门必须始终保持关闭并上锁。只有护士长和安保部主管持有钥匙。</div>
+    <div class="sub-rule">b) 每日向408号房间送三次餐食。将餐盘放在门口地面上，敲门三下，然后<em>立刻离开</em>。不要等待门打开。不要看是谁取走了餐盘。</div>
+    <div class="sub-rule">c) 如果408号房间的门是打开的——立即关闭并上锁。<em>不要向房间内看。</em>如果您不小心看到了房间内的内容——在值班日志上做标记，下班后前往心理评估室报到。不要与任何人讨论您看到的东西。</div>
+    <div class="sub-rule">d) 如果有患者问起408号房间，标准回答是："那是一间空置的储藏室。"</div>
+
+    <p class="rule"><span class="num">第15条.</span> 关于陈伯：陈伯是本院的清洁工。他是您可以<em>完全信任</em>的人。如果陈伯让您在某个时间做某件事——照做。不要问原因。如果陈伯递给您一张纸条——在独自一人时打开。读完立刻销毁。如果您看到陈伯在非工作时间出现——<em>不是他</em>。通过对讲机通知所有值班人员："今日有访客。"所有人听到此暗号后，暂停一切活动，就近进入最近的房间，锁门，等待十五分钟。注意：真正的陈伯右腿微跛。如果您看到的"陈伯"走路不跛——不是他。</p>
+
+    <p class="rule"><span class="num">第18条.</span> 如果您在值班时忽然对<em>自己的身份产生了怀疑</em>——比如您忽然不确定自己的名字、不确定自己为什么在这里、或者觉得镜中的自己看起来陌生——停止工作。前往心理评估室。如果心理评估室锁着门——回到宿舍，躺在床上，反复默念您的姓名、出生日期、和您最早的记忆。持续至少一小时。如果一小时后您仍然感到不确定——<em>不要告诉任何人。</em>第二天交辞职信。不要在疗养院范围内打开辞职信。不要回头看。</p>
+
+    <div style="margin-top:16px; padding:14px 18px; background:rgba(139,26,26,0.03); border:1px dashed rgba(139,26,26,0.15); font-size:13px; line-height:2; text-align:center; color:#6b4030;">
+      <em>（以下部分被撕去。纸张的撕裂边缘很整齐——像是故意被人小心地撕下，而不是匆忙扯掉的。）</em>
+    </div>
+
+    <div class="doc-footer">残页编号 STF-047-F · 发现日期不详</div>
+  </div>
+
+  <div class="doc-separator">※ ※ ※</div>
+
+  <!-- ═══════════════ 文档三：安保部内部备忘录 ═══════════════ -->
+  <div class="doc-card doc-security">
+    <div class="doc-header">
+      <div class="doc-label">文档三</div>
+      <h2>安保部内部备忘录</h2>
+      <div class="doc-stamp">（机密 · 仅限安保部人员传阅 · 阅后销毁 · 编号 SEC-047）</div>
+    </div>
+
+    <p style="font-size:12px; color:#6b4030; text-align:center; letter-spacing:1px; margin-bottom:18px;">
+      【注意：本文件纸张边缘有被火烧过的痕迹。最后两段字迹与前面明显不同——像是在不同时间写下的。】
+    </p>
+
+    <p class="rule"><span class="num">第3条.</span> 地下室巡逻守则：</p>
+    <div class="sub-rule">a) 每日两次巡逻地下室：第一次 14:00，第二次 02:00。巡逻时携带手电筒和机械计步器。<em>不要携带任何电子设备。</em>地下室的电磁场会导致设备故障。不要单独巡逻——两人一组。两人必须始终保持视线接触。</div>
+    <div class="sub-rule">b) 地下室的走廊长度固定为47米。如果您的计步器显示的长度不是47米——比47米长或短——<em>立刻原路返回。</em>当天的第二次巡逻取消。无论您已经走了多远，不要走到走廊尽头。</div>
+    <div class="sub-rule">c) 走廊尽头有一扇铁门。门上有一个观察窗。巡逻时确认铁门处于关闭状态。<em>不要通过观察窗向门内看。</em>如果您听到门内传出声音——无论是呼救声、哭声还是笑声——在值班日志上记录"正常"，然后继续巡逻。</div>
+    <div class="sub-rule">d) 如果铁门是<em>开着的</em>——这是最高级别的紧急情况。不要尝试关门。不要向门内看。不要跑。以正常步伐走回一楼。通过对讲机通知所有部门："花园需要浇水。"听到此暗号后，所有人员应立即撤出主楼。<em>这不是演习。</em></div>
+
+    <p class="rule"><span class="num">第7条.</span> 关于森林：森林是<em>缓冲区</em>。疗养院对森林内部没有管辖权。如果患者在夜间逃入森林——不要追。他们的档案会在48小时后自动注销。如果之后有人在疗养院内再次看到该患者——按照新患者流程处理。不要提及他之前的入住记录。如果在森林边缘看到有人招手——不要回应。不要靠近。那可能是之前逃入森林的"人"。</p>
+
+    <p class="rule"><span class="num">第10条.</span> 关于"花园"："花园"是本文件中对地下室铁门后方空间的代号。"花园需要浇水"意味着铁门已开，最高警戒。接到通知后，所有安保人员应：引导所有可见人员撤出主楼 → 锁闭主楼所有入口 → 在主楼外围设立警戒线 → 等待。通常情况下，24小时内铁门会自行关闭。如果超过24小时未关闭——联系山下的"总部"。电话号码在安保主管的保险柜里。注意："总部"可能不会接电话。或者接了电话的"人"——可能不是总部的人。如果您对电话那头的声音产生了任何不信任——挂断。半小时后再打。</p>
+
+    <p class="rule"><span class="num">第14条.</span> 关于您自己：安保人员每月接受一次心理评估。评估中有一个固定问题："您现在是在上班还是在做梦？"正确的答案是："我在上班。"如果您发现自己无法确定答案——您会被调离疗养院，转至山下的合作机构。这是好事。不要拒绝调离。如果您连续三次评估都"正常"通过——您可能在说谎，或者<em>已经不知道自己正在说谎</em>。请主动申请调离。如果申请被拒绝——您知道这意味着什么。</p>
+
+    <div style="margin-top:24px; padding:18px 20px; background:rgba(0,0,0,0.02); border-top:2px dashed rgba(139,26,26,0.15); font-size:13px; line-height:2.1; color:#3a2010;">
+      <p style="margin-bottom:8px;"><em>（以下为手写补充，笔迹粗重有力，与前面打印字体明显不同）：</em></p>
+      <p>我加几条。我是上一任安保主管。写这份东西的时候我已经交了辞职信。以下内容不在官方文件里。但你应该知道。</p>
+      <p>1. "铁门后面的东西"不是我们要防的。我们要防的是<em>它出来</em>。它一直在试图出来。铁门每次打开，就有一个新的白衣人出现在疗养院里。白衣人的数量，等于铁门打开过的次数。你算一下。</p>
+      <p>2. 408不是储藏室。408是"中转站"。白衣人在408里完成最后一阶段——学会如何成为一个具体的人。它们从408出来的时候，你已经分不出它们和原主的区别了。包括原主自己。</p>
+      <p>3. 周文渊医生是真的。张护士长是真的。陈伯是真的。其余的人——我不确定。我在这个岗位上干了三年，我都不确定。你不要相信任何人。包括我。</p>
+      <p>4. 如果你想活着离开——找陈伯。但必须是白天的、跛脚的、不笑的陈伯。他看到你的第一眼就知道你是不是你自己。如果他跟你说话——照着做。如果他没跟你说话——说明他已经放弃你了。</p>
+    </div>
+
+    <div class="doc-footer">备忘录编号 SEC-047-2023 · 原件已销毁 · 此为抄本</div>
+  </div>
+
+  <div class="doc-separator">※ ※ ※</div>
+
+  <!-- ═══════════════ 文档四：407号房患者日记 ═══════════════ -->
+  <div class="doc-card doc-diary">
+    <div class="doc-header">
+      <div class="doc-label">文档四</div>
+      <h2>407号房间 · 入住者日记</h2>
+      <div class="doc-stamp">（发现于床垫夹层 · 铅笔书写 · 字迹从工整渐至潦草）</div>
+    </div>
+
+    <div class="note-card">
+      <p class="diary-entry"><span class="diary-date">10月3日 · 入住第一天</span><br>
+      房间比想象中大。窗户对着山坡，能看到很好的夕阳。护士姓张，挺和气的，说有什么需要就按床头的铃。临走时她特意说了一句："晚上不要给任何人开门。"当时觉得有点奇怪，但没多想。<br>
+      晚饭在餐厅吃的。同桌是一个穿浅蓝色病号服的老人。他一顿饭一句话没说。后来我发现他的餐盘是空的。他一直在用筷子夹空气。我吃完就走了。</p>
+
+      <p class="diary-entry" style="margin-top:16px;"><span class="diary-date">10月5日 · 第三天</span><br>
+      昨晚没睡好。隔壁有敲墙声。三下。我没忍住敲了三下回去——纯粹是下意识。那边回了四下。我愣住了。之后大约一小时，墙那边传来很轻的说话声。听不太清内容。但我认出了<em>那个声音</em>。是我的。<br>
+      今天早上去问护士隔壁住的是谁。护士说隔壁是408，空的，没有住人。<br>
+      空房间不会敲墙。空房间不会用我的声音说话。<br>
+      护士在说谎。或者——护士根本不知道408里有什么。我不知道哪种情况更可怕。</p>
+
+      <p class="diary-entry" style="margin-top:16px;"><span class="diary-date">10月7日 · 第五天</span><br>
+      今天在走廊拐角看到了镜子。落地镜，金色边框。我盯着看了一会儿。镜子里有我。但我抬手的时候——好像有那么一丝丝的延迟。像镜中的我在等我先动，然后才跟上。非常非常细微的延迟。如果不是刻意盯着看，根本不会注意到。<br>
+      我想起手册上的话，立刻走了。二十步，闭眼数三十。再回去——镜子不见了。<br>
+      去护士站说了"我感到头晕"。护士给了我一杯温水。在护士站坐了十分钟。<br>
+      我现在在房间里写这些。门锁上了。窗帘拉上了。但我总觉得有人在看我。不是窗户的方向。是墙的方向。</p>
+
+      <p class="diary-entry" style="margin-top:16px;"><span class="diary-date">10月9日 · 第七天</span><br>
+      今天看到了穿白衣的人。在餐厅。他一个人坐在角落。食物完全没动。他一直在看周围的人——不是在观察，是在<em>学习</em>。像婴儿盯着大人的脸看的那种学习。有几次他跟我对上了视线。就半秒钟。但他的眼睛——很亮。亮得不像是人应该有的。像是被什么东西从里面点亮了。<br>
+      我低头吃完了饭。没再看他。<br>
+      出来时走廊第三扇门开着一条缝。我快步走过去了。没往里看。<br>
+      但我现在一直在想那扇门。开着——意味着什么？有人进去了？还是——有什么东西出来了？</p>
+
+      <p class="diary-entry" style="margin-top:16px;"><span class="diary-date">10月11日 · 第九天</span><br>
+      三天没写。出了事。<br>
+      昨天在走廊遇到了一个穿白衣的人。他对我笑了一下。<em>那是我自己的脸。</em><br>
+      不是镜子里的倒影。是实实在在地站在我面前、会呼吸、会动的——另一个我。他的病号服上绣着房间号。408。<br>
+      他走过我身边的时候，轻轻说了一句话："快了。"<br>
+      我现在手还在抖。不是害怕。是手不太像我的手了。我检查过——五根手指，都对。但手背上的皮肤纹理——我不确定。我从来没刻意记过自己手背上的纹路。现在我发现，我根本不记得自己的手长什么样。<br>
+      一个人应该能认出自己的手，对吧？</p>
+
+      <p class="diary-entry" style="margin-top:16px;"><span class="diary-date">10月12日 · 第十天</span><br>
+      今天见了陈伯。不是白天的陈伯。是晚上的。<br>
+      散步时间我多待了一会儿。天色半暗的时候，看到他一个人在扫走廊。他抬起头，对我笑了一下。手册里说——陈伯从来不笑。所以那不是陈伯。<br>
+      我跑了。没有跑向房间，跑向了树林。记住手册里那条被划掉重写的规则。<br>
+      树林里很黑。很冷。但是没有鸟叫，没有奇怪的声音。我在一棵大树下坐了一夜。中间几次差点睡着，每次快睡着的时候都感觉——有东西在摸我的脸。睁开眼睛什么都看不到。<br>
+      天亮从正门回来。前台果然什么都没问。好像我从未离开。<br>
+      但回到房间——床上放着一件叠好的白色病号服。不是我的尺码。不是我的东西。<br>
+      我把它扔进了垃圾桶。但我很确定——明天它还会出现在别的地方。</p>
+
+      <p class="diary-entry" style="margin-top:16px;"><span class="diary-date">10月14日 · 第十二天</span><br>
+      今天是第十二天。手册说最长住院时间十四天。我还有两天。<br>
+      我做了几件事。<br>
+      第一：翻遍了整本患者手册。在封底夹层里发现了被撕下来的纸——是护理人员工作手册的节选。上面写的东西和患者手册<em>完全相反</em>。患者说不要接近敞开的门——护士说看到患者走向敞开的门不要阻止。患者说408是空的——护士手册详细写了怎么给408送饭。患者说地下室不存在——护士根本没提地下室，但安保部的备忘录详细写了怎么巡逻地下室。<br>
+      第二：我把所有能找到的文件拼在一起。患者手册。护士手册残页。安保备忘录（在垃圾桶里找到的，有烧焦的痕迹）。还有我自己这几天的记录。我开始看到规律了。<br>
+      第三：以下是我总结的规律。如果你也在407——请仔细读。</p>
+
+      <div style="margin:16px 0; padding:18px 22px; background:rgba(0,0,0,0.03); border-left:3px solid #8b1a1a; line-height:2.2; font-size:14px;">
+        <p style="margin-bottom:8px;"><strong>我总结的规律：</strong></p>
+        <p>1. 这个疗养院的"它"——地下室铁门后面的东西——会<em>复制人</em>。不是你身体的复制，是你整个人的复制。记忆、性格、说话方式、行为习惯、一切。</p>
+        <p>2. 复制是有过程的：<em>标记 → 学习 → 复制 → 替换</em>。标记阶段你看得到镜子。学习阶段你会遇到白衣人。复制阶段你会看到穿白衣的你自己。替换阶段——我不知道，但我猜你会变成白色病号服，而那个复制体会穿上浅蓝色衣服，替你继续活着。你的朋友、家人——没有人能看出区别。因为那个复制体拥有你的一切。</p>
+        <p>3. <em>不同的文件写给不同阶段的人。</em>患者手册主要写给标记阶段和学习阶段早期的人。里面的规则——不看镜子、不回应声音、不接触白衣人——是为了减缓复制速度。但等你已经看到"穿白衣的自己"了，这些规则就不再管用了。你需要更激烈的手段——去森林、开走廊的门。</p>
+        <p>4. 护士手册是写给<em>已经被轻度标记的工作人员</em>的。大部分护士已经被标记过了——所以她们的规则和患者完全不同。她们不是坏人。她们只是——已经不完全是她自己了。</p>
+        <p>5. 安保备忘录是写给<em>知道真相但仍然是人的人</em>的。安保人员知晓地下室的秘密。他们是真正在"看守"——看住铁门后面的东西。但他们也在一点一点被消耗。</p>
+        <p>6. 真正的陈伯、真正的周医生、真正的张护士长——他们是<em>还没被替换的人</em>。他们能分辨谁是人、谁是复制体。如果在白天他们主动跟你说话——认真听。如果他们没有——说明他们已经判断你"不是你自己"了。</p>
+        <p>7. 森林是安全区。"它"的力量延伸不到森林。但森林里有之前逃出去的人——和"曾经是人"的东西。在森林过夜是安全的，但不要跟任何东西交流。</p>
+        <p>8. 我觉得<em>有办法逃出去</em>。办法不在任何一份文件里单独出现——它们分散在患者手册、护士手册、安保备忘录和——我猜——患者手册最后一页（那个只有在你真正需要时才会显示文字的"应急措施"）。如果你能把所有文件拼在一起，就能看到完整的路。</p>
+      </div>
+
+      <p class="diary-entry" style="margin-top:16px;">
+        我今晚要去打开走廊的第三扇门。手册说"后四扇门中有一扇通向外界"。我知道这是赌。但待在房间里等——也是等死。我宁可死在寻找出路的路上。<br>
+        如果有人在读这段文字——希望我已经成功了。如果我没有成功——希望这段记录能帮你。<br><br>
+        最后一条：如果你在走廊里看到了一个穿浅蓝色病号服的、长得和我一模一样的人——我不知道。也许那是真正的我逃出来了。也许那只是又一个它。<em>判断标准是：问他一个问题。一个只有你自己知道答案的问题。</em>如果他能答上来——可能是真的。如果他答不上来——跑。</p>
+
+      <p style="text-align:right; margin-top:16px; font-size:12px; color:#5a3a2a; letter-spacing:1px;">
+        — 407号房间入住者<br>不知道日期<br>不知道我还是不是我
+      </p>
+    </div>
+
+    <div class="doc-footer">日记原件存放于：未知 · 此抄本完成于不详日期</div>
+  </div>
+
+  <div class="doc-separator">※ ※ ※</div>
+
+  <!-- ═══════════════ 文档五：应急措施——最后一页 ═══════════════ -->
+  <div class="doc-card doc-emergency" id="emergency-page">
+    <div class="doc-header">
+      <div class="doc-label">文档五</div>
+      <h2>应急措施</h2>
+      <div class="doc-stamp">（患者手册最后一页 · 仅在需要时显现文字）</div>
+    </div>
+
+    <div class="hidden-page" id="hidden-content" onclick="this.classList.toggle('revealed')">
+      <div class="hidden-title">以下为应急措施</div>
+
+      <div class="hidden-text">
+        <p style="margin-bottom:14px;"><strong>如果您正在阅读这些文字，说明您已经走到了最后一步。</strong>您已经看到了白衣的自己，或者您已经无法确认镜子中的倒影是否是您自己。以下信息可能救您的命。也可能已经太晚了。您自己判断。</p>
+
+        <p style="margin-bottom:10px;"><strong>关于"它"是什么：</strong></p>
+        <p style="margin-bottom:10px;">春山疗养院建于一个"界面"之上。界面的另一侧有一个实体——我们不知道它是什么、从哪来、存在了多久。我们只知道它会"学习"人。它通过各种方式收集您的信息：</p>
+        <p style="margin-bottom:6px;">&emsp;• 镜子是它的"眼睛"——通过镜子观察您的样貌</p>
+        <p style="margin-bottom:6px;">&emsp;• 声音回应是它的"耳朵"——通过您对敲墙声、鸟鸣声的回应，学习您的声音模式</p>
+        <p style="margin-bottom:6px;">&emsp;• 与白衣人的情绪互动是它的"触角"——您的情感波动会被它捕获</p>
+        <p style="margin-bottom:10px;">&emsp;• 睡眠是它的"窗口"——当您失去意识时，它可以通过墙壁接触读取您的记忆</p>
+        <p style="margin-bottom:14px;">当它收集到足够的信息，就会制造一个复制体。复制体先穿白衣（"学习期"），然后——当它完全掌握您——替换您。没有人会发现区别。</p>
+
+        <p style="margin-bottom:10px;"><strong>您现在有三个选择：</strong></p>
+
+        <p style="margin-bottom:8px;"><strong>选择一（如果您尚能看到自己的倒影并能确认手纹）：</strong></p>
+        <p style="margin-bottom:12px;">前往护士站找到张护士长。对她说暗号："我想看看山下的花。"她会带您去找陈伯。陈伯将带您走过地下室走廊——不是铁门那边的走廊，是另一条——维修通道，可以绕过"它"的感知范围直达疗养院外面的盘山公路。但您必须和陈伯一起走。如果中途发现陈伯不再跛行——停下来。您身边的不是陈伯。按选择二处理。</p>
+
+        <p style="margin-bottom:8px;"><strong>选择二（如果您不能确认倒影或手纹）：</strong></p>
+        <p style="margin-bottom:12px;">您已经被深度标记。复制体已经或接近完成。护士站的方法对您已失效（护士长无法区分您和复制体——在深度标记阶段，您和复制体在她的判断中已经"一样真实"了）。前往庭院东侧，翻过围栏进入森林。在森林里待到天亮。天亮后从正门回来——您会被"重置"（"它"会暂时丢失您的信息）。之后立刻找到真正的周文渊医生签字出院。您有一天的窗口期。不要浪费。</p>
+        <p style="margin-bottom:12px;">森林中注意：不要回应任何呼唤。不要靠近任何人影。天亮后找到树干上刻有箭头的那棵最大的树，跟着箭头走回正门。</p>
+
+        <p style="margin-bottom:8px;"><strong>选择三（如果您在午夜零点至四点读到这段文字，且门外没有声音）：</strong></p>
+        <p style="margin-bottom:12px;">这是最佳逃离窗口。此时"它"的活动最弱。直接走出房间，走楼梯（不要坐电梯），到一楼，经过厨房旁边的工作人员通道，从后门离开疗养院。后门通往盘山公路。沿公路向下走约两公里，会看到一个废弃的售票亭。售票亭里有一部还能用的固定电话。拨打以下号码：<strong>137-2047-0477</strong>。告诉接电话的人您在"春山"。他们会派人来接。不要在电话里说任何其他的话。不要问问题。</p>
+
+        <div class="final-warning">
+          <strong>▎最后的验证：</strong><br>
+          如何判断您正在阅读的是真正的应急措施，还是"它"植入的虚假版本？看这一段：真正的应急措施最后一段的最后一个词语是"<strong>机会</strong>"。如果最后一个词语是别的什么——您手中的不是原来的最后一页。扔掉它。跑向森林。<br>
+          您还有<strong>机会</strong>。
+        </div>
+      </div>
+
+      <div class="reveal-hint">（鼠标悬停或点击此处以显现文字 —— 如果您需要它）</div>
+    </div>
+
+    <div class="doc-footer" style="margin-top:10px;">此页仅在需要时阅读 · 不要提前查看 · 时机未到之时，它应该是空白的</div>
+  </div>
+
+  <!-- ═══════════════ 结尾 ═══════════════ -->
+  <div style="text-align:center; margin-top:10px; padding: 24px; font-size:11px; color:rgba(139,26,26,0.25); letter-spacing:3px;">
+    <p>档案到此为止。整理者注：407号房患者的最终去向不明。</p>
+    <p style="margin-top:4px;">走廊第三扇门没有留下打开的痕迹。但408号房间——根据护士值班记录——在那天晚上多了一位"已完成"的患者。</p>
+    <p style="margin-top:4px;">也可能是少了一位。</p>
+    <p style="margin-top:12px; font-size:9px; color:rgba(139,26,26,0.12);">本档案已被阅读 ████ 次 · 您可能是第 ████ 位读者 · 请注意您的手</p>
+  </div>
+
+</div>
+
+<script>
+// 飘浮的暗影粒子 - 少量、轻淡
+(function() {
+  var container = document.createElement('div');
+  container.style.cssText = 'position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden;';
+  document.body.appendChild(container);
+
+  for (var i = 0; i < 12; i++) {
+    var p = document.createElement('div');
+    p.className = 'dust-particle';
+    p.style.width = (Math.random() * 40 + 15) + 'px';
+    p.style.height = p.style.width;
+    p.style.left = Math.random() * 100 + '%';
+    p.style.animationDuration = (Math.random() * 20 + 16) + 's';
+    p.style.animationDelay = (Math.random() * 18) + 's';
+    container.appendChild(p);
+  }
+})();
+
+// 纸页微颤
+(function() {
+  var cards = document.querySelectorAll('.doc-card');
+  function shake() {
+    cards.forEach(function(card, i) {
+      var x = (Math.random() - 0.5) * 0.4;
+      var y = (Math.random() - 0.5) * 0.4;
+      var r = (Math.random() - 0.5) * 0.02;
+      card.style.transform = 'translate(' + x + 'px, ' + y + 'px) rotate(' + r + 'deg)';
+    });
+    setTimeout(shake, Math.random() * 10000 + 5000);
+  }
+  setTimeout(shake, 8000);
+})();
+
+// 最后一页交互
+(function() {
+  var page = document.getElementById('hidden-content');
+  if (!page) return;
+  // 初始滚动时如果可见，自动 reveal
+  var revealed = false;
+  var observer = new IntersectionObserver(function(entries) {
+    entries.forEach(function(entry) {
+      if (entry.isIntersecting && !revealed) {
+        setTimeout(function() {
+          page.classList.add('revealed');
+          revealed = true;
+        }, 2000);
+      }
+    });
+  }, { threshold: 0.5 });
+  observer.observe(page);
+})();
+</script>
+
+</body>
+</html>
