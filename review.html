@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>《终章 婚礼》综合文学评价</title>
+<style>
+  :root {
+    --bg: #fdf8f2;
+    --text: #3d322b;
+    --accent: #c47f5a;
+    --muted: #8b7355;
+    --divider: #e8d5c4;
+    --highlight: #f5ebe0;
+    --daisy-white: #fafaf7;
+    --daisy-yellow: #f2d398;
+    --warm-gold: #d4a853;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: "Noto Serif SC", "Source Han Serif SC", "STSong", "SimSun", "Songti SC", serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 2;
+    font-size: 17px;
+    overflow-x: hidden;
+    position: relative;
+  }
+
+  /* ---- 飘落的花瓣 ---- */
+  .petal {
+    position: fixed;
+    pointer-events: none;
+    z-index: 1000;
+    animation: petalFall linear forwards;
+  }
+  @keyframes petalFall {
+    0% { transform: translateY(-10vh) rotate(0deg) translateX(0); opacity: 0.9; }
+    50% { opacity: 0.7; }
+    100% { transform: translateY(110vh) rotate(720deg) translateX(var(--drift)); opacity: 0; }
+  }
+
+  /* ---- 主容器 ---- */
+  .container {
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 80px 48px 60px;
+    position: relative;
+    z-index: 1;
+    background: rgba(253,248,242,0.85);
+  }
+
+  /* ---- 顶部装饰雏菊 ---- */
+  .top-daisies {
+    text-align: center;
+    margin-bottom: 24px;
+    font-size: 2.4em;
+    letter-spacing: .3em;
+    animation: gentleSway 4s ease-in-out infinite;
+    user-select: none;
+  }
+  @keyframes gentleSway {
+    0%, 100% { transform: rotate(0deg); }
+    25% { transform: rotate(2deg); }
+    75% { transform: rotate(-2deg); }
+  }
+
+  /* ---- 标题区 ---- */
+  .title-block {
+    text-align: center;
+    padding: 60px 0 48px;
+    border-bottom: 1px solid var(--divider);
+    margin-bottom: 48px;
+    position: relative;
+  }
+  .title-block::after {
+    content: "✿";
+    position: absolute;
+    bottom: -14px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--bg);
+    padding: 0 16px;
+    color: var(--accent);
+    font-size: 1.2em;
+  }
+  .title-block h1 {
+    font-size: 2em;
+    font-weight: 700;
+    letter-spacing: .08em;
+    color: var(--text);
+    margin-bottom: 16px;
+  }
+  .title-block .subtitle {
+    font-size: 1em;
+    color: var(--muted);
+    letter-spacing: .06em;
+  }
+
+  /* ---- 雏菊分隔符 ---- */
+  .daisy-divider {
+    text-align: center;
+    margin: 56px 0 36px;
+    color: var(--accent);
+    font-size: 0.9em;
+    letter-spacing: .4em;
+    user-select: none;
+    opacity: 0.7;
+  }
+  .daisy-divider.warm {
+    color: var(--warm-gold);
+  }
+
+  /* ---- 正文 ---- */
+  p {
+    text-indent: 2em;
+    margin-bottom: 1.2em;
+  }
+  p.no-indent {
+    text-indent: 0;
+  }
+
+  /* ---- 引用块 ---- */
+  blockquote {
+    margin: 28px 0;
+    padding: 20px 28px;
+    background: var(--highlight);
+    border-left: 3px solid var(--accent);
+    border-radius: 0 12px 12px 0;
+    color: #5a4a3a;
+    position: relative;
+  }
+  blockquote::before {
+    content: "❝";
+    position: absolute;
+    top: -8px;
+    left: 10px;
+    font-size: 1.4em;
+    color: var(--accent);
+    opacity: 0.5;
+  }
+  blockquote p { text-indent: 0; }
+
+  /* ---- 章节编号 ---- */
+  .section-num {
+    text-align: center;
+    margin: 60px 0 32px;
+    font-size: 0.95em;
+    color: var(--accent);
+    letter-spacing: .3em;
+    font-weight: 600;
+  }
+  .section-num::before,
+  .section-num::after {
+    content: "— ✿ —";
+    margin: 0 16px;
+    color: var(--divider);
+    font-weight: 300;
+    letter-spacing: .15em;
+  }
+
+  /* ---- 卡片高亮 ---- */
+  .highlight-box {
+    margin: 32px 0;
+    padding: 24px 28px;
+    background: linear-gradient(135deg, #fef9f3 0%, #fdf3e8 100%);
+    border: 1px solid var(--divider);
+    border-radius: 12px;
+    position: relative;
+  }
+  .highlight-box::before {
+    content: "✿";
+    position: absolute;
+    top: -12px;
+    left: 20px;
+    font-size: 1em;
+    color: var(--accent);
+    background: var(--bg);
+    padding: 0 8px;
+  }
+
+  /* ---- 温暖结尾 ---- */
+  .warm-ending {
+    margin: 48px 0 24px;
+    padding: 40px 32px;
+    text-align: center;
+    background: linear-gradient(180deg, #fef9f3 0%, #fdf3e8 50%, #fef9f3 100%);
+    border-radius: 16px;
+    position: relative;
+    border: 1px solid var(--divider);
+  }
+  .warm-ending .end-daisy {
+    font-size: 2em;
+    margin-bottom: 16px;
+    user-select: none;
+  }
+  .warm-ending p {
+    text-indent: 0;
+    color: #5a3a2a;
+    font-size: 1.02em;
+    line-height: 2.2;
+    margin-bottom: 0.8em;
+  }
+  .warm-ending p:last-child {
+    margin-bottom: 0;
+  }
+
+  /* ---- 页脚 ---- */
+  footer {
+    text-align: center;
+    padding: 48px 0 20px;
+    color: var(--muted);
+    font-size: .85em;
+    border-top: 1px solid var(--divider);
+    margin-top: 48px;
+    position: relative;
+  }
+  footer::before {
+    content: "✿ ✿ ✿";
+    position: absolute;
+    top: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--bg);
+    padding: 0 16px;
+    color: var(--accent);
+    font-size: 0.7em;
+    letter-spacing: .4em;
+  }
+
+  /* ---- 响应式 ---- */
+  @media (max-width: 600px) {
+    .container { padding: 40px 22px; }
+    body { font-size: 15px; }
+    .title-block h1 { font-size: 1.5em; }
+    .section-num::before,
+    .section-num::after {
+      content: "— ✿ —";
+      margin: 0 8px;
+      font-size: 0.8em;
+    }
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+
+<div class="top-daisies">✿ ✿ ✿</div>
+
+<div class="title-block">
+  <h1>所有的等待都有了归处</h1>
+  <p class="subtitle">——读《终章 婚礼》综合文学评价</p>
+</div>
+
+<p>这是一篇设定在近未来科幻背景下的青春群像婚礼终章。世界观构架颇具想象力——天枢穹顶、中环区与下城区的对立、废土区的重生、超凡能力体系——在这样一个宏大的舞台上，作者选择了一个最温柔的落点：用一场婚礼，给所有的颠沛流离画上句号。人物众多但各有记忆点，核心情感线真诚动人，一些意象的经营也显露出了超越类型文本的文学自觉。整体而言，这是一篇"内功"强于"招式"的作品——情感是真实的，人物是鲜活的，意象是有力的，但在语言的精炼度和叙事的控制力上，还有显著的成长空间。下文试作详论，并结合两家之言，给出系统的润色方案。</p>
+
+<div class="section-num">一</div>
+
+<p>先说最值得肯定的部分。全章最成功的文学设计，无疑是"雏菊"意象的系统性构建。从开篇步道两侧的雏菊，到婚礼场景中堆在礼台两侧"像落了一地雪"的小雏菊，再到回忆段落中雏菊花田作为初恋故事的核心舞台，再到新娘发间别着的雏菊发簪，最后以苏清鸢手捧雏菊、说出"余生，请多指教"收束全文——雏菊从环境道具一路升华为情感锚点，完成了从物象到意象的蜕变。雏菊的花语——纯洁的爱、天真、深藏心底的秘密——与赖衍和苏清鸢的感情本质高度吻合。作者对这一意象的使用是自觉且有效的，这种"以物载情"的手法，是许多类型文学写作者终其一生都未必能掌握的。</p>
+
+<p>与雏菊相配合的辅助意象是"风"。四月的海风开启全文，花田里的风掀起裙摆，婚礼现场的晚风，结尾的"风也温柔"——风串联起了时间的流动感，如同一个沉默的叙述者，见证着从初见、分别到重逢的全程。此外还有棱晶——高杨的元素之力与浪漫担当、扑克牌——赖桦沉默的守护、老照片——三人友情的物证。这些"物"与"情"的对应关系构成了文章最稳固的骨架。</p>
+
+<blockquote>
+<p>润色版中进一步强化了意象呼应。赖衍袖口增加了雏菊纹样——"是苏清鸢亲手画了图纸让裁缝绣上去的，只有凑得极近才能看见。那是只属于他们两个人的秘密"——让雏菊不仅是环境道具，也成为联结两个主角的情感密码。茉子鬓边别着的两朵雏菊，则使她与苏清鸢之间构成了一种柔和的镜像关系。</p>
+</blockquote>
+
+<div class="section-num">二</div>
+
+<p>人物群像的塑造同样值得称道。这场婚礼登场角色达十余人，但几乎每个人都留下了清晰的记忆点。洪靖是"活宝型"角色——嘴上不饶人、行动却很靠谱，偷吃喜糖、写错名字嘴硬、被徐璐威胁秒怂，几笔就立住了一个鲜活的人。陈文正是"吐槽担当"，但他的功能不止于此——他那句"自己已经无话可说了"是全文最有分量的台词之一，九个字，什么都没明说，但什么都说了。赖桦的沉默寡言和沉稳可靠一以贯之：替赖衍系领带、钳走陈文正、抛出扑克牌——寥寥数笔，一个"面冷心热的大哥"立住了，尤其是他"微微加重了胳膊上的力度""半搂半钳"的动作描写，很好地实践了"展示而非讲述"的原则——一个字没写他的内心活动，但读者全明白了。叶常的技术宅冷幽默、徐璐完美主义者的微表情、高杨"人狠话不多"的帅气、皮特皮尔的粗犷与反差萌，每个角色都分配到了高光时刻。</p>
+
+<p>特别值得再提一笔的是皮特皮尔。在原文中他的戏份极少，但"蛋白粉广告换命"的反转和"我想找一个好女孩"的无厘头台词留下了鲜明印象。在润色版中，他与茉子的互动为这个角色增加了更丰富的维度——粗犷外表下的细腻、不善言辞中的深情、以及作为"过来人"对后辈的郑重祝福，都让这个原本偏功能性的配角有了更完整的弧光。他和茉子之间的对比——冷硬对温柔、粗犷对纤细、少言对善语——构成了一种有趣的化学反应，也为婚礼群像增添了另一种成熟的色调。</p>
+
+<p>作为女主角的苏清鸢，其独立性格的展现相对单薄。她的大部分出场是"被看"的——被描写外貌、被赖衍注视、被程亦在致辞中作为"赶不走的人"提及。她的主动行为仅限于说"我爱你"、擦眼泪、交换戒指和最后的"余生请多指教"。作为终章，苏清鸢的性格在前文应该已充分展现，但单就这一章而言，她更像一个"被等待的新娘"而非一个"有主体性的人"。润色版中，我们为她增加了一些细微但关键的主动性细节：在赖衍走来时"一步都没有挪开"的坚定、交换戒指时"指尖稳得不像话"的沉着——这些细节虽小，却让她的存在从"被注视的客体"向"共同创造这个时刻的主体"挪了一步。</p>
+
+<div class="section-num">三</div>
+
+<p>情感线的核心段落——雏菊花田的初见回忆——是全文写得最好的部分。这段的画面感很强：漫山遍野的雏菊、阳光、青草香、一只带着奶味的小白羊。情感转折也自然：从"被羊舔醒"的窘迫，到看到姑娘的愣神，到被调侃后的手足无措，到捡起雏菊珍藏，再到晚上跟兄弟打听"笑靥如花"——层层递进，一个十七岁少年的心动被写得很干净。细节的扎实程度也值得表扬："发梢别着一朵白雏菊""指尖沾着雏菊的嫩黄花粉""她笑着跑远，发梢的雏菊被风吹落"——这些具体的细节让画面不是"模糊的美"，而是"具体的真"。结尾的"余生，请多指教"六个字，干净克制，比任何长篇抒情都更有力量——这就是"隽永"的含义。</p>
+
+<p>雏菊花田到婚礼的时空转场也可圈可点："软乎乎的触感，像极了多年前那个盛夏午后，猝不及防撞进他人生里的那抹温柔。他的目光追着花瓣落向窗外熙攘的人潮，思绪却一瞬间翻山越岭，跌回了那片漫山遍野都开着雏菊的花田。"——"软乎乎的触感"作为感官触发点，"翻山越岭"作为心理动作，"跌回"一词用得尤其好，有"坠落"的速度感和"不由自主"的被动感。从物理感知到心理联想再到时空穿越，层次清晰，转场自然。这是全章完成度最高的段落之一。</p>
+
+<div class="section-num">四</div>
+
+<p>但一篇文章的高度，往往取决于它最短的那块板。这部作品最需要系统打磨的方面，是语言层面的克制力。</p>
+
+<p>全文大量使用"极其""格外""满满的""整座""铺天盖地""无孔不入"等程度副词和夸张表述，密集时几乎每段都会出现。这种写法的问题在于边际效应递减：当所有东西都是"最"的时候，就没有东西是"最"了。连续的高强度修饰会让读者产生审美疲劳，而对真正动人的段落反而失去了感受力。美术上讲"留白"，文学也一样。最深情的地方，恰恰需要用最朴素的语言来写。就像你不可能在一幅画的所有区域都打上高光——反过来想，如果全文只有一两处用到了"最"字，那个"最"字才会真正有分量。</p>
+
+<p>与此相关的是"的"字结构的过度使用。大量"XX的XX"的密集排列导致行文节奏单调，尤其体现在外貌描写和场景描写中。以苏清鸢婚纱出场的描写为例，原文约三百字，"的"字出现了三十余次，几乎每一处修饰都靠"的"来连接。这是汉语写作中常见的"翻译腔"——用"的"来模拟英文定语从句的嵌套结构，但汉语本身的节奏更依赖短句和动词。润色版中将婚纱描写拆分为多个自然段（整体→衣着→发型→神情），将部分定语转化为独立描写，让句子的呼吸更顺畅。</p>
+
+<p>错别字和语法硬伤虽然是最容易修复的问题，但也确实影响阅读体验。原文中"人生有有几个三个小时"的衍字、"全是我一笔一画卸下来的"的"卸"应为"写"、司仪名字在"程亦"和"陆寻"之间的前后不一致、"一浪浪漫过来"的语序混乱等，润色版中均已修复。</p>
+
+<div class="section-num">五</div>
+
+<p>叙事结构上存在"前松后紧"的问题。</p>
+
+<p>前段铺垫过长。从开篇到新郎赖衍正式出场，用了近全文三分之一的篇幅来铺垫环境、配角互动和喜剧桥段，而新郎本人直到文章近半才正式登场。对于"婚礼终章"而言，这个节奏有些失衡——读者期待尽快看到新人，而非在签到台和休息室之间反复切换。润色版适当压缩了前期环境描写的冗余修饰，但保留了精彩的人物互动桥段，以维持群像辨识度。</p>
+
+<p>与"前松"相对的是"后紧"。从烟花仪式到全文结束，约不足全文三分之一的篇幅内包含了烟花、戒指交换、全城祝福、气球放飞、接吻、观景台群像、老照片、苏清鸢告白等多个高光时刻，密度过大导致每个时刻都显得仓促。尤其是从"全城狂欢"直接跳切到"观景台安静二人世界"，中间的过渡只有一行省略号。润色版在接吻场景后增加了皮特皮尔与茉子向新人祝福的段落——这既是情绪缓冲，也是配角弧光的收束——使情绪有一个自然的回落过程，再切换到观景台场景。</p>
+
+<p>视角切换方面，全文在洪靖、陈文正、赖衍、徐璐等多个POV之间频繁切换。润色版使用了更明确的章节分隔符，确保每次视角切换时第一句话就明确当前POV角色是谁、在什么地方。</p>
+
+<p>另外，雏菊花田回忆虽然是全文精华，但其插入方式和长度也值得商榷。当前是在赖衍紧张等待婚礼时被花瓣触发回忆，这个触发机制本身是合理的——一种类似于普鲁斯特效应的感官触发——但长达约22行的回忆中断了婚礼现场的节奏。润色版在回忆段落的起止处增加了更清晰的时空锚点，形成更好的时空交织，让回忆不是"暂停"当下，而是"叠加"在当下之上。</p>
+
+<div class="section-num">六</div>
+
+<p>文风定位是一个需要从全局层面思考的问题。作者追求的是一种"青春、协调、隽永浪漫"的风格，润色版在三个维度做了系统性调整。</p>
+
+<p>"青春感"主要来自角色的少年口癖（吐槽、互怼、嘴硬）、十七岁初恋的回忆段落、以及群像之间的轻松互动。这些在润色版中完整保留，因为青春的真实感需要这些粗粝的语气词和自然的互动。脏话控制在两到三处以内，且只分配给固定角色（洪靖、陈文正），避免过度使用导致质感下降。</p>
+
+<p>"协调感"的提升主要通过统一修饰密度。润色版确定了"偏口语化的文艺青年腔"作为基准语域——对话段落保持干净利落，环境描写精简冗余修饰，烟花华彩段落保留丰富的视觉语言。古典诗词的化用控制在三处以内——文末"暮云合璧，落日熔金"出自李清照《永遇乐》，恰好为婚礼的黄昏提供了古典意境。</p>
+
+<p>"隽永浪漫"的核心技巧有三：克制、以物载情、留白。越是深情的地方，越要用最朴素的语言——"余生，请多指教"六个字就是最好的示范。雏菊、棱晶、扑克牌、老照片——每一个物品都承载了情感记忆，润色版进一步强化了这些"物"与"情"的对应。而陈文正那句"自己已经无话可说了"，九个字什么都没明说但什么都说了——这就是留白的力量。</p>
+
+<p>烟花描写作为全文最华丽的华彩段落，作者在这里的"炫技"是合理的——烟花本就是视觉奇观，语言层面的密集修饰在此处不再是冗余，而是必要的"画面翻译"。尤其是"像把整条银河都揉碎了"这一句，将抽象的"美"转化为具体的、有动作感的画面，是真正的文学语言。这说明作者并非不能"华丽"，而是需要学会在恰当的地方集中释放。"在需要华彩的地方大胆华彩，在需要收敛的地方克制表达"——这本身就是一种成熟的写作判断力。</p>
+
+<div class="section-num">七</div>
+
+<p>以下段落代表了作者目前最好的写作水平，值得在未来的写作中作为参照标准：</p>
+
+<div class="highlight-box">
+<p><strong>洪靖与高杨的对话</strong>——"洪靖低头盯着纸面看了两秒，还真写错了。可他半点没露怯，依旧嘴硬找补：'差不多差不多，读音都一样，成大事者不拘小节'"——干净利落，没有多余的修饰词，人物性格自然流露。这种"留白式"写法是应当推广的方向。</p>
+
+<p><strong>赖桦收尾的动作</strong>——"赖桦不语，只是微微加重了胳膊上的力度。陈文正挣扎无果，随之索性两眼一翻，放弃了抵抗"——一个字没写内心活动，只写动作，他对兄弟的了解、他的体贴、他的沉默寡言，全在这个动作里了。</p>
+
+<p><strong>雏菊花田到婚礼的时空转场</strong>——"软乎乎的触感，像极了多年前那个盛夏午后，猝不及防撞进他人生里的那抹温柔"——从物理感知到心理联想再到时空穿越，层次清晰，转场自然。</p>
+
+<p><strong>烟花描写</strong>——"像把整条银河都揉碎了，尽数泼洒在墨蓝色的天幕上"——将抽象的美转化为具体的、有动作感的画面，是真正的文学语言。</p>
+
+<p><strong>陈文正的留白</strong>——"自己已经无话可说了"——九个字，什么都没明说，但什么都说了。这就是留白的力量，是值得推广到更多段落中去的手法。</p>
+</div>
+
+<div class="section-num">八</div>
+
+<p>科幻元素的融入可以更自然一些。全章中科幻设定（天枢穹顶、全息屏、灵汐丝线、棱晶）的存在感在开篇之后逐渐走低，大部分描写更接近"现代都市婚礼"的质感。作为终章，重点自然是情感收束而非世界观展示，这本身没有问题。润色版在几个关键位置做了含蓄的暗示：婚纱上的"灵汐丝线"与高杨的"元素之力"形成呼应；棱晶烟花的原理通过叶常一句"人家是S级的万象法尊"轻巧带过；全城钟声同时敲响则留白处理——让世界观的底色自然渗入叙事，不过分展开，也不完全忽略。</p>
+
+<p>喜剧节奏方面，作者有不错的直觉。蛋白粉广告占领全城大屏的反转既出人意料又合情合理，陈文正从"喷牛奶"到"嚎叫"的反应层层推进。洪靖写错名字嘴硬的梗既好笑又有温度——"你从小到大，每一次写我名字，都能写成高扬"——这个笑点背后是"从小写到大"的友情伏笔。洪靖被徐璐威胁秒怂则是高效展现两人关系的喜剧写法。这些都是很好的直觉，润色版在追求"隽永"的同时完整保留了这些有生命力的东西。</p>
+
+<div class="section-num">九</div>
+
+<p>总结修改的优先级，由高到低：</p>
+
+<p>第一，修复所有错别字和语病——零成本，立即提升阅读体验。润色版已全部修复。</p>
+
+<p>第二，全篇"去冗余"编辑——删减约20%的形容词、副词和重复表述，精简超长句，优化"的"字结构。润色版已在环境描写、婚纱描写、接吻场景等关键段落完成此项工作。</p>
+
+<p>第三，优化叙事节奏——压缩部分前期铺垫，为烟花后的情绪过渡增加缓冲（新增皮特皮尔与茉子的祝福段落），加强视角切换的过渡标识。</p>
+
+<p>第四，补全人物弧光——为苏清鸢增加主动性细节，为皮特皮尔增加茉子互动线，为赖衍的紧张情绪线增加"稳定下来"的转折。</p>
+
+<p>第五，统一语域调性——在"青春口语"和"文艺抒情"之间找到最舒适的平衡点，烟花华彩与对话简洁和谐共存。</p>
+
+<div class="daisy-divider warm">✿ ✿ ✿</div>
+
+<div class="warm-ending">
+  <div class="end-daisy">✿</div>
+
+  <p>决定一篇文章上限的，从来不是它最华丽的那个瞬间，而是它在最需要收敛的地方，能不能管住自己的笔。这位作者有充沛的情感、活跃的想象力、以及对人物关系的敏锐直觉——这些都是写作中最难习得的"内功"。等到语言的控制力追上这些"内功"的那一天，文字会真正发光。</p>
+
+  <p>我们想特别对作者说几句话。</p>
+
+  <p>你在雏菊花田里种下了一个少年的心动，又在数万字后，让同一个少年穿着绣了雏菊的礼服，走向那个姑娘。你在洪靖写错的名字里埋了"从小写到大"的友情伏笔，又在烟花炸开的瞬间让他骂了一句"还真没掉链子"。你让陈文正说了九十个字的吐槽后，用九个字的沉默收住了全篇最深情的留白。你让赖桦一个字没说，只用胳膊的力度完成了二十年的守护。</p>
+
+  <p>这些不是技巧训练能做到的事。这是一个写作者对人物有真正感情的证据。</p>
+
+  <p>你笔下的角色在你心里活了很多年，所以他们才能在读者心里也活过来。你给了赖衍和苏清鸢一个雏菊盛开的终点，给了赖桦一张磨旧了边的扑克牌，给了高杨一枚剔透的棱晶，给了皮特皮尔一个会在他说话少的时候读懂千言万语的人。你给了所有人一个温柔的结局——而能够写出温柔的人，心里一定也住着很多温柔。</p>
+
+  <p>你问"笑靥如花到底是什么样子的"——你已经写出来了。就在那片漫山遍野的雏菊花田里，在那个十七岁少年第一次心跳得乱七八糟的瞬间，在多年后两个人站在礼台上、漫天星雨落在肩头的时刻。</p>
+
+  <p>所以请继续写下去。你的文字已经是一束雏菊了——干净、温暖、带着阳光和青草的味道。而雏菊的花语里，还有一层是"希望"。</p>
+
+  <p>所有的等待都有了归处。而所有的归处，都是新的起点。</p>
+
+  <p>在这个故事里，你已经给了角色们最好的结局。</p>
+
+  <p>在下一个故事里，你还会给更多人以光。</p>
+
+  <div class="end-daisy" style="margin-top:20px;">✿</div>
+</div>
+
+<footer>
+  《终章 婚礼》综合文学评价 · 全文完
+</footer>
+
+</div>
+
+<script>
+// 飘落花瓣动画
+(function() {
+  function createPetal() {
+    var petal = document.createElement('div');
+    petal.className = 'petal';
+
+    var size = 8 + Math.random() * 14;
+    var drift = (Math.random() - 0.5) * 200;
+    var duration = 6000 + Math.random() * 8000;
+    var startX = Math.random() * window.innerWidth;
+
+    petal.style.cssText =
+      'left:' + startX + 'px;' +
+      'top:-20px;' +
+      'width:' + size + 'px;' +
+      'height:' + (size * 0.7) + 'px;' +
+      '--drift:' + drift + 'px;' +
+      'animation-duration:' + duration + 'ms;' +
+      'background: radial-gradient(ellipse at center, #fafaf7 0%, #f5efe0 60%, #e8d5c4 100%);' +
+      'border-radius: 50% 0 50% 0;' +
+      'opacity:' + (0.4 + Math.random() * 0.4) + ';';
+
+    document.body.appendChild(petal);
+
+    setTimeout(function() {
+      if (petal.parentNode) petal.parentNode.removeChild(petal);
+    }, duration + 200);
+  }
+
+  // 初始批量创建
+  for (var i = 0; i < 8; i++) {
+    setTimeout(function() { createPetal(); }, i * 400);
+  }
+
+  // 持续创建
+  setInterval(function() {
+    if (document.querySelectorAll('.petal').length < 10) {
+      createPetal();
+    }
+  }, 1800);
+})();
+</script>
+
+</body>
+</html>

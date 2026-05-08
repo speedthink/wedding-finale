@@ -1,0 +1,9 @@
+node_modules/
+package-lock.json
+package.json
+server.js
+*.pptx
+add_transitions.js
+create_nalan_ppt.js
+public/
+.claude/
