@@ -1,0 +1,621 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>智能安全科研方向分析 — 大创课题筛选与方向确定</title>
+<style>
+  :root {
+    --bg: #f8f9fb;
+    --card-bg: #ffffff;
+    --text: #2c3e50;
+    --text-secondary: #5a6c7d;
+    --border: #e2e8f0;
+    --accent: #3b5ccc;
+    --accent-light: #eef1ff;
+    --red: #d9304a;
+    --red-light: #fef2f3;
+    --green: #1a8a4a;
+    --green-light: #edf8f2;
+    --orange: #d97706;
+    --orange-light: #fffcf0;
+    --purple: #7c3aed;
+    --purple-light: #f5f3ff;
+    --teal: #0d9488;
+    --teal-light: #f0fdfa;
+    --tag-对抗: #d9304a;
+    --tag-应用: #3b5ccc;
+    --tag-交叉: #7c3aed;
+    --tag-无关: #94a3b8;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", "Noto Sans SC", sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.7;
+    padding: 32px 20px;
+  }
+  .container { max-width: 1200px; margin: 0 auto; }
+
+  /* Header */
+  .header {
+    text-align: center;
+    padding: 48px 32px;
+    background: linear-gradient(135deg, #1a1f36 0%, #2d3561 40%, #3b5ccc 100%);
+    border-radius: 16px;
+    color: white;
+    margin-bottom: 32px;
+  }
+  .header h1 { font-size: 2em; margin-bottom: 8px; letter-spacing: 0.02em; }
+  .header .subtitle { font-size: 1.05em; opacity: 0.85; font-weight: 400; }
+
+  /* Section */
+  .section { margin-bottom: 28px; }
+  .section-title {
+    font-size: 1.35em;
+    font-weight: 700;
+    padding: 14px 20px;
+    border-radius: 10px 10px 0 0;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .section-body {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-top: none;
+    border-radius: 0 0 10px 10px;
+    padding: 20px 24px;
+  }
+  .section-body.standalone {
+    border-top: 1px solid var(--border);
+    border-radius: 10px;
+  }
+
+  /* Color variants */
+  .s-blue .section-title { background: #eef1ff; color: #3b5ccc; }
+  .s-red .section-title { background: #fef2f3; color: #d9304a; }
+  .s-green .section-title { background: #edf8f2; color: #1a8a4a; }
+  .s-purple .section-title { background: #f5f3ff; color: #7c3aed; }
+  .s-orange .section-title { background: #fffcf0; color: #d97706; }
+  .s-teal .section-title { background: #f0fdfa; color: #0d9488; }
+  .s-dark .section-title { background: #f1f5f9; color: #334155; }
+
+  /* Tables */
+  table { width: 100%; border-collapse: collapse; font-size: 0.93em; }
+  th { background: #f8fafc; font-weight: 600; text-align: left; padding: 10px 14px; border-bottom: 2px solid #e2e8f0; color: #475569; white-space: nowrap; }
+  td { padding: 10px 14px; border-bottom: 1px solid #f1f5f9; vertical-align: top; }
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: #fafbfc; }
+
+  /* Tags */
+  .tag {
+    display: inline-block;
+    font-size: 0.82em;
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-weight: 600;
+    letter-spacing: 0.01em;
+    white-space: nowrap;
+  }
+  .tag-对抗样本 { background: #fef2f3; color: #d9304a; }
+  .tag-大模型 { background: #eef1ff; color: #3b5ccc; }
+  .tag-双交叉 { background: #f5f3ff; color: #7c3aed; }
+  .tag-无关方向 { background: #f1f5f9; color: #64748b; }
+
+  /* Badge */
+  .badge {
+    display: inline-block;
+    padding: 2px 8px; border-radius: 4px;
+    font-size: 0.78em; font-weight: 700;
+  }
+  .badge-high { background: #fef2f3; color: #d9304a; }
+  .badge-mid { background: #fffcf0; color: #d97706; }
+  .badge-low { background: #edf8f2; color: #1a8a4a; }
+
+  /* Star rating */
+  .stars { color: #f59e0b; letter-spacing: 2px; }
+
+  /* Filter flow */
+  .flow-box {
+    display: flex; align-items: center; gap: 16px;
+    flex-wrap: wrap; padding: 20px 0;
+  }
+  .flow-step {
+    padding: 12px 20px; border-radius: 10px; font-weight: 600;
+    text-align: center; min-width: 100px;
+  }
+  .flow-arrow { font-size: 1.4em; color: #94a3b8; font-weight: 300; }
+
+  /* Card grid */
+  .card-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 16px; }
+  .card {
+    background: var(--card-bg); border: 1px solid var(--border);
+    border-radius: 10px; padding: 20px;
+  }
+  .card h4 { font-size: 1.05em; margin-bottom: 8px; }
+  .card .meta { font-size: 0.85em; color: var(--text-secondary); margin-bottom: 10px; }
+  .card .desc { font-size: 0.9em; color: #475569; margin-bottom: 8px; }
+  .card .projects { font-size: 0.85em; color: var(--accent); }
+
+  /* Compare table compact */
+  .compare-table th:first-child, .compare-table td:first-child { min-width: 160px; font-weight: 600; }
+
+  /* Key insight box */
+  .insight-box {
+    background: linear-gradient(135deg, #fffbeb 0%, #fff7ed 100%);
+    border: 1px solid #fcd34d; border-radius: 10px; padding: 16px 20px;
+    font-size: 0.93em; margin-top: 12px;
+  }
+  .insight-box strong { color: #d97706; }
+
+  /* Decision aid */
+  .decision-row {
+    display: grid; grid-template-columns: 200px 1fr;
+    gap: 0; border: 1px solid var(--border); border-radius: 8px;
+    overflow: hidden; margin-bottom: 8px;
+  }
+  .decision-label {
+    background: #f8fafc; padding: 10px 16px;
+    font-weight: 600; font-size: 0.9em;
+    display: flex; align-items: center;
+  }
+  .decision-value { padding: 10px 16px; font-size: 0.9em; }
+
+  /* Highlight */
+  .hl { background: linear-gradient(180deg, transparent 60%, #fef08a 60%); }
+
+  /* Responsive */
+  @media (max-width: 768px) {
+    .header { padding: 32px 20px; }
+    .header h1 { font-size: 1.4em; }
+    .card-grid { grid-template-columns: 1fr; }
+    .decision-row { grid-template-columns: 1fr; }
+  }
+
+  /* Print */
+  @media print {
+    body { background: white; padding: 0; }
+    .section { break-inside: avoid; }
+    .card { break-inside: avoid; }
+  }
+
+  /* 细分 section headers */
+  .sub-section { margin-top: 20px; }
+  .sub-title {
+    font-size: 1.08em; font-weight: 700; margin-bottom: 12px;
+    padding-bottom: 8px; border-bottom: 2px solid var(--border);
+    display: flex; align-items: center; gap: 8px;
+  }
+  .sub-title .num {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 28px; height: 28px; border-radius: 50%;
+    background: var(--accent); color: white;
+    font-size: 0.85em; font-weight: 700;
+  }
+
+  .info-grid {
+    display: grid; grid-template-columns: 180px 1fr;
+    gap: 1px; background: var(--border);
+    border: 1px solid var(--border); border-radius: 8px;
+    overflow: hidden; margin: 12px 0;
+  }
+  .info-grid .ilabel {
+    background: #f8fafc; padding: 8px 14px;
+    font-weight: 600; font-size: 0.88em;
+  }
+  .info-grid .ivalue {
+    background: white; padding: 8px 14px;
+    font-size: 0.88em;
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+<!-- ===== HEADER ===== -->
+<div class="header">
+  <h1>🧠 智能安全科研方向分析</h1>
+  <div class="subtitle">基于大创课题库的分类筛选 · 方向对比 · 科研路线确定</div>
+</div>
+
+<!-- ===== 一、筛选流程总览 ===== -->
+<div class="section s-dark">
+  <div class="section-title">📋 一、筛选流程总览</div>
+  <div class="section-body standalone">
+    <div class="flow-box" style="justify-content:center; text-align:center;">
+      <div class="flow-step" style="background:#f1f5f9;color:#475569;">
+        15+ 大创课题<br><small>六个赛道分类</small>
+      </div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step" style="background:#eef1ff;color:#3b5ccc;border:2px solid #3b5ccc;">
+        <strong>筛选两个方向</strong><br><small>基础对抗样本攻防<br>大模型对抗安全</small>
+      </div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step" style="background:#dbeafe;color:#1e40af;border:2px solid #1e40af;box-shadow:0 0 0 4px rgba(59,92,204,0.15);">
+        <strong>⭐ 确定主攻方向</strong><br><small>大模型对抗安全<br>（兴趣最强）</small>
+      </div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step" style="background:#f5f3ff;color:#6d28d9;border:2px solid #6d28d9;">
+        <strong>细分四个子方向</strong><br><small>逐一对比分析</small>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== 二、全部课题与赛道分类 ===== -->
+<div class="section s-dark">
+  <div class="section-title">🗂️ 二、全部课题与六大赛道分类</div>
+  <div class="section-body">
+    <table>
+      <thead>
+        <tr><th style="width:5%">#</th><th style="width:15%">赛道</th><th>课题名称</th><th style="width:12%">细分方向</th><th style="width:12%">归类标签</th></tr>
+      </thead>
+      <tbody>
+        <!-- 赛道一 -->
+        <tr><td rowspan="3" style="text-align:center;font-weight:700;color:#3b5ccc;">一</td>
+            <td rowspan="3" style="font-weight:600">AI驱动的网络攻防<br>与智能靶场</td>
+            <td>《基于AI Agent驱动的动态攻防推演靶场平台的设计与实现》</td>
+            <td>AI智能体自动化红蓝对抗、动态攻防推演靶场</td>
+            <td><span class="tag tag-无关方向">传统网安智能化</span></td></tr>
+        <tr><td>《基于严格网段隔离与多重异构防护的信创仿真网络安全靶场设计》</td>
+            <td>信创环境仿真靶场、网段隔离安全防护</td>
+            <td><span class="tag tag-无关方向">传统网安智能化</span></td></tr>
+        <tr><td>《ApexSentinel：基于大语言模型的APT检测与溯源系统》</td>
+            <td>大模型赋能APT检测、攻击链路溯源</td>
+            <td><span class="tag tag-无关方向">LLM仅作工具，非对抗核心</span></td></tr>
+
+        <!-- 赛道二 -->
+        <tr style="background:#fafcff;"><td rowspan="6" style="text-align:center;font-weight:700;color:#d9304a;">二</td>
+            <td rowspan="6" style="font-weight:600;color:#d9304a;">大模型安全<br>与生成式AI治理</td>
+            <td>《基于大模型的多模态风险内容识别技术研究》</td>
+            <td>多模态内容风控、图文对抗扰动检测防御</td>
+            <td><span class="tag tag-大模型">大模型对抗安全</span></td></tr>
+        <tr style="background:#fafcff;"><td>《PromptDefender：基于内容级语义验证的Prompt知识产权保护平台》</td>
+            <td>提示词注入对抗检测、Prompt水印与防护</td>
+            <td><span class="tag tag-大模型">大模型对抗安全</span></td></tr>
+        <tr style="background:#fafcff;"><td>《深度合成检测与敏感内容管理平台——多模态对抗扰动下AIGC鉴伪系统》</td>
+            <td>AIGC深度伪造识别、多模态对抗样本鉴伪</td>
+            <td><span class="tag tag-大模型">大模型对抗安全</span></td></tr>
+        <tr style="background:#fafcff;"><td>《知识引导大模型特征推理对抗防御系统——高风险对抗性诈骗话术识别平台》</td>
+            <td>文本对抗诈骗话术识别、知识图谱增强鲁棒风控</td>
+            <td><span class="tag tag-大模型">大模型对抗安全</span></td></tr>
+        <tr style="background:#fafcff;"><td>《多模态大模型后门与对抗投毒检测平台》</td>
+            <td>多模态训练投毒对抗、模型后门攻击与检测</td>
+            <td><span class="tag tag-双交叉">双交叉方向 ★</span></td></tr>
+        <tr style="background:#fafcff;"><td>《"佑安"全灾程应急响应多智能体大模型协同智链》</td>
+            <td>多智能体可信基座、模型篡改检测、对抗鲁棒加固</td>
+            <td><span class="tag tag-双交叉">双交叉方向 ★</span></td></tr>
+
+        <!-- 赛道三 -->
+        <tr><td style="text-align:center;font-weight:700;color:#d9304a;">三</td>
+            <td style="font-weight:600;color:#d9304a;">可信人工智能<br>与深度学习模型安全</td>
+            <td>可信人工智能、AI模型篡改检测、深度学习模型安全防护</td>
+            <td>通用视觉对抗样本攻防、模型完整性校验、后门检测、可证明安全</td>
+            <td><span class="tag tag-对抗样本">基础对抗样本攻防</span></td></tr>
+
+        <!-- 赛道四 -->
+        <tr><td rowspan="3" style="text-align:center;font-weight:700;color:#64748b;">四</td>
+            <td rowspan="3" style="font-weight:600">网络黑产智能治理<br>与业务安全</td>
+            <td>《玄鉴：互联网黑产应用威胁情报平台》</td>
+            <td>恶意APP识别、黑产威胁情报挖掘</td>
+            <td><span class="tag tag-无关方向">非对抗方向</span></td></tr>
+        <tr><td>《烛远——互联网犯罪资产侦查雷达》</td>
+            <td>网络黑产资金/团伙链路溯源、反诈犯罪资产追踪</td>
+            <td><span class="tag tag-无关方向">非对抗方向</span></td></tr>
+        <tr><td>《基于具象化用户意图感知的最小化隐私收集合规检测系统》<br><small>（获"最具创新创业价值奖"）</small></td>
+            <td>APP隐私合规智能审计、用户隐私权限检测</td>
+            <td><span class="tag tag-无关方向">非对抗方向</span></td></tr>
+
+        <!-- 赛道五 -->
+        <tr><td style="text-align:center;font-weight:700;color:#64748b;">五</td>
+            <td style="font-weight:600">关键基础设施<br>智能网联安全</td>
+            <td>IVN-Defender：车载网络分层入侵智能检测系统</td>
+            <td>车联网CAN总线入侵检测、车载网络异常流量识别</td>
+            <td><span class="tag tag-无关方向">非对抗方向</span></td></tr>
+
+        <!-- 赛道六 -->
+        <tr><td style="text-align:center;font-weight:700;color:#64748b;">六</td>
+            <td style="font-weight:600">隐私计算<br>与智能身份安全</td>
+            <td>《SwiftIrisAuth——基于LWE的链上虹膜隐私认证系统》</td>
+            <td>格密码(LWE)后量子隐私计算、虹膜生物特征隐私认证</td>
+            <td><span class="tag tag-无关方向">非对抗方向</span></td></tr>
+      </tbody>
+    </table>
+
+    <div class="insight-box" style="margin-top:16px;">
+      <strong>🔑 关键区分：</strong>很多人混淆"<em>用大模型做安全</em>"和"<em>大模型对抗安全</em>"——
+      <strong>前者</strong>（如ApexSentinel）只是把LLM当文本分析工具，不研究大模型自身的漏洞/对抗扰动/后门/越狱；
+      <strong>后者</strong>研究的是大模型<u>自身</u>的对抗攻防，是本分析的核心。
+    </div>
+  </div>
+</div>
+
+<!-- ===== 三、筛选出的两个兴趣方向 ===== -->
+<div class="section s-red">
+  <div class="section-title">🎯 三、筛选出的两个兴趣方向</div>
+  <div class="section-body">
+    <div class="card-grid">
+      <div class="card" style="border-left:4px solid #d9304a;">
+        <h4>🔴 方向A：基础对抗样本攻防<br><small>（可信AI底层）</small></h4>
+        <div class="meta">对应赛道：可信人工智能与深度学习模型安全 | 主导老师：朱和贵</div>
+        <div class="desc">
+          <strong>核心内容：</strong>通用视觉模型对抗样本攻防、模型完整性校验、后门检测、对抗鲁棒性防御、可证明安全<br>
+          <strong>研究层级：</strong>底层算法，以图像/视觉对抗样本为基础，数学理论深
+        </div>
+        <div class="projects">
+          <strong>对应课题：</strong><br>
+          • 可信人工智能、AI模型篡改检测、深度学习模型安全防护<br>
+          • 《"佑安"全灾程应急响应多智能体大模型协同智链》（交叉）<br>
+          • 《多模态大模型后门与对抗投毒检测平台》（交叉）
+        </div>
+      </div>
+
+      <div class="card" style="border-left:4px solid #3b5ccc;box-shadow:0 4px 20px rgba(59,92,204,0.12);">
+        <h4>🔵 方向B：大模型对抗安全 ⭐<br><small>（LLM/多模态对抗 · 最终选定）</small></h4>
+        <div class="meta">对应赛道：大模型安全与生成式AI治理 | 课题数量最多（6个）</div>
+        <div class="desc">
+          <strong>核心内容：</strong>研究大模型自身的对抗性漏洞——越狱攻击、Prompt注入、对抗样本绕过、后门植入、训练投毒等<br>
+          <strong>研究层级：</strong>覆盖应用层到算法底层，可深可浅，竞赛适配度极高
+        </div>
+        <div class="projects">
+          <strong>对应课题（6个核心 + 2个交叉）：</strong><br>
+          • 《基于大模型的多模态风险内容识别技术研究》<br>
+          • 《PromptDefender：内容级语义验证的Prompt知识产权保护》<br>
+          • 《深度合成检测——多模态对抗扰动下AIGC鉴伪系统》<br>
+          • 《知识引导大模型特征推理对抗防御——对抗性诈骗话术识别》<br>
+          • 《多模态大模型后门与对抗投毒检测平台》★<br>
+          • 《"佑安"全灾程应急响应多智能体大模型协同智链》★
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== 四、大模型对抗安全 四细分方向详解 ===== -->
+<div class="section s-blue">
+  <div class="section-title">🔬 四、大模型对抗安全 —— 四个细分方向深度分析</div>
+  <div class="section-body">
+
+    <!-- 细分1 -->
+    <div class="sub-section">
+      <div class="sub-title"><span class="num">1</span> 多模态对抗样本与AIGC鉴伪防御</div>
+      <div class="info-grid">
+        <div class="ilabel">通俗理解</div>
+        <div class="ivalue">给图片加人眼看不见的细微噪点/像素改动，正常人类看不出变化，但多模态大模型（GPT-4V、文心一言等）会完全认错图片内容；或者给违规图片加隐式扰动，绕过平台AI审核。<strong>防御端：</strong>设计算法识别带对抗扰动的虚假AIGC图片、换脸视频、伪造音频。</div>
+        <div class="ilabel">解决痛点</div>
+        <div class="ivalue">诈骗分子用AI换脸、伪造证件、虚假图文造谣，还会加隐形对抗扰动绕过内容审核平台；传统检测方法碰到对抗扰动就失效。</div>
+        <div class="ilabel">对应课题</div>
+        <div class="ivalue">《基于大模型的多模态风险内容识别技术研究》《深度合成检测与敏感内容管理平台——多模态对抗扰动下AIGC鉴伪系统》</div>
+        <div class="ilabel">985对标项目</div>
+        <div class="ivalue"><strong>浙江大学</strong>《深度合成检测与敏感内容管理平台》（第十九届揭榜挂帅专项<strong>特等奖</strong>）</div>
+        <div class="ilabel">科研难度</div>
+        <div class="ivalue"><span class="stars">★★★</span> 中等偏高</div>
+        <div class="ilabel">数学依赖</div>
+        <div class="ivalue"><span class="badge badge-high">高</span> 底层复用图像对抗的梯度、凸优化理论</div>
+        <div class="ilabel">竞赛适配度</div>
+        <div class="ivalue"><span class="badge badge-high">极高</span> 揭榜挂帅企业榜题极多，演示直观（上传伪造图片实时识别），答辩加分拉满</div>
+        <div class="ilabel">发展前景</div>
+        <div class="ivalue">既能做学术论文，就业对应大厂内容安全、多模态安全算法岗</div>
+      </div>
+    </div>
+
+    <!-- 细分2 -->
+    <div class="sub-section">
+      <div class="sub-title"><span class="num">2</span> 文本对抗 & Prompt攻防 <span style="font-size:0.85em;color:#d9304a;font-weight:400;">（当下竞赛最热门）</span></div>
+      <div class="info-grid">
+        <div class="ilabel">通俗理解</div>
+        <div class="ivalue">
+          <strong>Prompt越狱攻击：</strong>用分段话术、角色扮演、编码转换、隐喻诱导等对抗性文本，绕开大模型安全规则，诱导输出诈骗教程、暴力内容；<br>
+          <strong>提示注入攻击：</strong>把隐藏恶意指令藏在文档/图片/网页里，大模型读取时忽略用户正常提问，执行攻击者暗藏的恶意操作；<br>
+          <strong>防御方向：</strong>语义级检测所有对抗性prompt，给企业专属提示词加水印加密防窃取篡改。
+        </div>
+        <div class="ilabel">解决痛点</div>
+        <div class="ivalue">企业付费大模型的核心专属提示词是核心资产，极易被对抗话术窃取；全网大量用户用越狱话术诱导大模型生成有害内容，平台审核压力巨大。</div>
+        <div class="ilabel">对应课题</div>
+        <div class="ivalue">《PromptDefender：基于内容级语义验证的Prompt知识产权保护平台》</div>
+        <div class="ilabel">985对标项目</div>
+        <div class="ivalue"><strong>浙江大学</strong>《PromptDefender：内容级语义验证的Prompt知识产权保护平台》（第十九届人工智能+专项<strong>特等奖</strong>）</div>
+        <div class="ilabel">科研难度</div>
+        <div class="ivalue"><span class="stars">★★</span>~<span class="stars">★★★★</span> 两极分化：纯应用层低，底层文本对抗算法创新高</div>
+        <div class="ilabel">数学依赖</div>
+        <div class="ivalue">应用层<span class="badge badge-low">低</span> → 底层算法<span class="badge badge-high">高</span>（离散空间梯度优化、语义扰动数学建模）</div>
+        <div class="ilabel">竞赛适配度</div>
+        <div class="ivalue"><span class="badge badge-high">极高</span> 所有大模型企业赛道都有对应需求，现场演示越狱拦截效果，评委一眼看懂价值</div>
+        <div class="ilabel">⚠️ 短板</div>
+        <div class="ivalue" style="color:#d9304a;">纯应用层项目内卷严重——全国上万本科生都在做，<strong>必须结合底层对抗算法才有竞争力</strong></div>
+      </div>
+    </div>
+
+    <!-- 细分3 -->
+    <div class="sub-section">
+      <div class="sub-title"><span class="num">3</span> 文本对抗风控 & 黑产对抗性话术识别</div>
+      <div class="info-grid">
+        <div class="ilabel">通俗理解</div>
+        <div class="ivalue">电信诈骗、网络刷单黑产会刻意改造话术——用同义词替换、拆分句子、谐音暗语、分段编码等"文本对抗手段"伪装成正常聊天，绕过银行/社交平台的风控大模型。设计带<strong>对抗鲁棒性</strong>的大模型风控系统，不管黑产怎么改写话术都能精准识别。</div>
+        <div class="ilabel">解决痛点</div>
+        <div class="ivalue">传统风控规则固定，黑产不断迭代对抗话术，误判漏判率极高，每年电信诈骗损失千亿级别。</div>
+        <div class="ilabel">对应课题</div>
+        <div class="ivalue">《知识引导的大模型特征图推理在高风险用户识别中的应用》《知识引导大模型特征推理对抗防御系统——高风险对抗性诈骗话术识别平台》</div>
+        <div class="ilabel">985对标项目</div>
+        <div class="ivalue"><strong>清华大学</strong>《知识引导的大模型特征图推理在高风险用户识别中的应用》（第十九届揭榜挂帅专项<strong>特等奖</strong>）</div>
+        <div class="ilabel">科研难度</div>
+        <div class="ivalue"><span class="stars">★★★</span> 中等</div>
+        <div class="ilabel">数学依赖</div>
+        <div class="ivalue"><span class="badge badge-mid">中等</span> 结合图神经网络、对抗迁移学习，不需极深的视觉优化</div>
+        <div class="ilabel">竞赛适配度</div>
+        <div class="ivalue"><span class="badge badge-high">极高</span> 社会价值拉满，对接公安、运营商反诈需求，评委非常青睐</div>
+        <div class="ilabel">就业适配</div>
+        <div class="ivalue">互联网大厂风控、金融科技反诈安全岗，岗位需求量大</div>
+      </div>
+    </div>
+
+    <!-- 细分4 -->
+    <div class="sub-section">
+      <div class="sub-title"><span class="num">4</span> 大模型后门、训练投毒、多智能体可信对抗 <span style="font-size:0.85em;color:#7c3aed;font-weight:400;">（硬核科研路线）</span></div>
+      <div class="info-grid">
+        <div class="ilabel">通俗理解</div>
+        <div class="ivalue">
+          <strong>模型投毒&后门攻击：</strong>在大模型训练数据里混入对抗性触发样本，平时完全正常，只要出现特定关键词/图片（后门触发器），就输出攻击者指定的错误/有害内容；<br>
+          <strong>多智能体可信安全：</strong>AI智能体可联网、调用工具、操作文件、发邮件——攻击者通过对抗输入操控智能体执行危险操作（删数据、泄露机密、对外转账）。
+        </div>
+        <div class="ilabel">解决痛点</div>
+        <div class="ivalue">企业第三方外包训练大模型存在后门植入风险；应急、金融等高风险场景，大模型一旦被对抗输入误导会造成重大损失。</div>
+        <div class="ilabel">对应课题</div>
+        <div class="ivalue">《多模态大模型后门与对抗投毒检测平台》《"佑安"全灾程应急响应多智能体大模型协同智链》</div>
+        <div class="ilabel">985对标项目</div>
+        <div class="ivalue"><strong>上海交通大学</strong>《"佑安"》（第十九届揭榜挂帅<strong>人工智能主擂台擂主</strong>，赛道最高特等奖）<br><strong>复旦大学</strong>《多模态大模型后门与对抗投毒检测平台》（第十九届主体赛<strong>全国特等奖</strong>）</div>
+        <div class="ilabel">科研难度</div>
+        <div class="ivalue"><span class="stars">★★★★</span> <span class="badge badge-high">最高</span> 纯底层算法创新</div>
+        <div class="ilabel">数学依赖</div>
+        <div class="ivalue"><span class="stars">★★★★★</span> <span class="badge badge-high">极高</span> 大量梯度优化、鲁棒性数学推导</div>
+        <div class="ilabel">竞赛适配度</div>
+        <div class="ivalue"><span class="badge badge-high">高</span> 技术深度碾压普通应用类项目，最容易冲击<strong>擂主级特等奖</strong></div>
+        <div class="ilabel">深造前景</div>
+        <div class="ivalue"><span class="badge badge-high">最优</span> 成果极易投稿IEEE TIFS、CCS、USENIX Security等安全顶会顶刊，保研/读博竞争力断层领先</div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ===== 五、四方向横向对比 ===== -->
+<div class="section s-purple">
+  <div class="section-title">📊 五、四个细分方向横向对比总表</div>
+  <div class="section-body">
+    <table class="compare-table">
+      <thead>
+        <tr>
+          <th>对比维度</th>
+          <th>① 多模态对抗&AIGC鉴伪</th>
+          <th>② 文本对抗&Prompt攻防</th>
+          <th>③ 文本对抗风控&反诈</th>
+          <th>④ 后门投毒&可信对抗</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>科研难度</td>
+          <td><span class="stars">★★★</span> 中高</td>
+          <td><span class="stars">★★</span>~<span class="stars">★★★★</span> 两极</td>
+          <td><span class="stars">★★★</span> 中等</td>
+          <td><span class="stars">★★★★</span> <span class="badge badge-high">最高</span></td>
+        </tr>
+        <tr>
+          <td>数学门槛</td>
+          <td><span class="badge badge-high">高</span></td>
+          <td>应用<span class="badge badge-low">低</span> / 底层<span class="badge badge-high">高</span></td>
+          <td><span class="badge badge-mid">中</span></td>
+          <td><span class="badge badge-high">极高</span> <span class="stars">★★★★★</span></td>
+        </tr>
+        <tr>
+          <td>竞赛适配</td>
+          <td><span class="badge badge-high">极高</span></td>
+          <td><span class="badge badge-high">极高</span></td>
+          <td><span class="badge badge-high">极高</span></td>
+          <td><span class="badge badge-high">高</span>（冲擂主）</td>
+        </tr>
+        <tr>
+          <td>内卷程度</td>
+          <td>中等</td>
+          <td><span class="badge badge-high">极高</span>（应用层）</td>
+          <td>中等</td>
+          <td><span class="badge badge-low">低</span>（门槛高）</td>
+        </tr>
+        <tr>
+          <td>学术发表</td>
+          <td>中高（CV/安全交叉）</td>
+          <td>中（NLP/安全会议）</td>
+          <td>中（数据挖掘/安全）</td>
+          <td><span class="badge badge-high">顶会级</span>（CCS/USENIX/TIFS）</td>
+        </tr>
+        <tr>
+          <td>就业方向</td>
+          <td>内容安全、多模态安全</td>
+          <td>大模型安全、平台审核</td>
+          <td>风控反诈、金融科技</td>
+          <td>AI安全研究、安全实验室</td>
+        </tr>
+        <tr>
+          <td>985特等奖先例</td>
+          <td>✅ 浙大</td>
+          <td>✅ 浙大</td>
+          <td>✅ 清华</td>
+          <td>✅ 上交(擂主) + 复旦</td>
+        </tr>
+        <tr>
+          <td>与基础对抗样本交叉</td>
+          <td>高（图像对抗基础）</td>
+          <td>中（文本离散对抗）</td>
+          <td>中（对抗迁移学习）</td>
+          <td><span class="badge badge-high">极高</span>（深度融合）</td>
+        </tr>
+        <tr>
+          <td>适合人群</td>
+          <td>有CV基础，想结合多模态</td>
+          <td>编程强，想快速出成果</td>
+          <td>关注社会价值，反诈情怀</td>
+          <td>数学强，目标顶会/读博</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ===== 六、科研路线建议 ===== -->
+<div class="section s-green">
+  <div class="section-title">💡 六、科研路线决策建议</div>
+  <div class="section-body">
+    <div class="card-grid">
+      <div class="card" style="border-left:4px solid #1a8a4a;">
+        <h4>🟢 推荐路线一：稳扎稳打型</h4>
+        <div class="desc">
+          <strong>选择：</strong>细分③ <strong>文本对抗风控&反诈话术识别</strong><br><br>
+          <strong>理由：</strong><br>
+          • 难度适中（★★★），数学门槛不极端<br>
+          • 社会价值突出，竞赛答辩加分明显<br>
+          • 清华已有特等奖先例，路线可行<br>
+          • 就业面广（风控/反诈/金融科技）<br>
+          • 与基础对抗样本有一定交叉，后续可深化
+        </div>
+      </div>
+
+      <div class="card" style="border-left:4px solid #3b5ccc;">
+        <h4>🔵 推荐路线二：竞赛冲刺型</h4>
+        <div class="desc">
+          <strong>选择：</strong>细分② <strong>文本对抗&Prompt攻防</strong>（底层算法方向）<br><br>
+          <strong>理由：</strong><br>
+          • 当下最热门赛道，竞赛需求旺盛<br>
+          • 演示效果直观（越狱拦截），答辩加分<br>
+          • 可浅可深——先快速出原型参赛，再深挖算法<br>
+          • ⚠️ 但纯应用层内卷严重，<strong>必须加入底层对抗算法创新</strong>
+        </div>
+      </div>
+
+      <div class="card" style="border-left:4px solid #7c3aed;">
+        <h4>🟣 推荐路线三：学术深造型</h4>
+        <div class="desc">
+          <strong>选择：</strong>细分④ <strong>大模型后门&训练投毒&可信对抗</strong><br><br>
+          <strong>理由：</strong><br>
+          • 技术深度最高，壁垒强，竞争者少<br>
+          • 与基础对抗样本攻防深度融合，可复用朱和贵老师方向积累<br>
+          • 成果可投顶会（CCS/USENIX/TIFS）<br>
+          • 保研/读博竞争力断层领先<br>
+          • ⚠️ 数学要求极高（★★★★★），适合有决心做深度研究的同学
+        </div>
+      </div>
+    </div>
+
+    <div class="insight-box" style="margin-top:16px;">
+      <strong>💡 综合建议：</strong>如果希望<strong>竞赛+学术双线发展</strong>，可以考虑以<strong>细分③（反诈风控）作为竞赛主打方向</strong>（难度适中、社会价值高、演示效果好），同时在研究深度上向<strong>细分④（后门投毒/可信对抗）延伸</strong>，利用基础对抗样本攻防的数学功底做底层创新，最终投稿顶会——形成"<strong>竞赛冲奖 + 学术论文</strong>"的双重成果。
+    </div>
+  </div>
+</div>
+
+<!-- ===== 页脚 ===== -->
+<div style="text-align:center;color:#94a3b8;font-size:0.85em;padding:24px 0;">
+  基于大创课题库整理分析 · 2026年6月
+</div>
+
+</div>
+</body>
+</html>
