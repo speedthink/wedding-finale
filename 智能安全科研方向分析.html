@@ -337,7 +337,7 @@
     <div class="card-grid">
       <div class="card" style="border-left:4px solid #d9304a;">
         <h4>🔴 方向A：基础对抗样本攻防<br><small>（可信AI底层）</small></h4>
-        <div class="meta">对应赛道：可信人工智能与深度学习模型安全 | 主导老师：朱和贵</div>
+        <div class="meta">对应赛道：可信人工智能与深度学习模型安全</div>
         <div class="desc">
           <strong>核心内容：</strong>通用视觉模型对抗样本攻防、模型完整性校验、后门检测、对抗鲁棒性防御、可证明安全<br>
           <strong>研究层级：</strong>底层算法，以图像/视觉对抗样本为基础，数学理论深
@@ -478,6 +478,178 @@
   </div>
 </div>
 
+<!-- ===== 四-B：多模态对抗样本攻防 —— 深度细分与课题规划 ===== -->
+<div class="section s-teal">
+  <div class="section-title">🔬 四-B、多模态对抗样本攻防 —— 深度细分与课题规划</div>
+  <div class="section-body">
+
+    <div class="insight-box" style="margin-bottom:20px;">
+      <strong>🎯 核心目标：</strong>在人类感知不到的前提下，通过微小扰动破坏AI模型的正常输出，同时研究如何提升模型的鲁棒性以抵御攻击。这一方向<strong>门槛梯度清晰</strong>——从大一即可上手的图像对抗，到顶会热门的跨模态攻击，再到产业急需的大模型越狱攻防，适合不同阶段的同学切入。
+    </div>
+
+    <!-- 四大方向卡片 -->
+    <div class="sub-section">
+      <div class="sub-title">📌 四大子方向全景</div>
+      <div class="card-grid">
+        <div class="card" style="border-left:4px solid #0d9488;">
+          <h4>① 基础图像对抗样本<br><small>（大一入门首选）</small></h4>
+          <div class="meta">门槛最低 · 上手最快</div>
+          <div class="desc">
+            <strong>核心逻辑：</strong>给图像添加人眼无法察觉的微小像素扰动，让图像分类、目标检测、人脸识别模型输出错误结果。<br>
+            <strong>经典算法：</strong>FGSM（单步攻击，入门必学）、PGD（迭代攻击，最常用）、C&W（优化类攻击）<br>
+            <strong>适配场景：</strong>入门练手、复现论文，大一寒假就能掌握核心逻辑并跑出实验结果。
+          </div>
+        </div>
+
+        <div class="card" style="border-left:4px solid #7c3aed;">
+          <h4>② 跨模态对抗攻击<br><small>（当前顶会热点）</small></h4>
+          <div class="meta">前沿方向 · 创新空间大</div>
+          <div class="desc">
+            <strong>针对对象：</strong>CLIP、GPT-4V等图文多模态大模型<br>
+            <strong>典型场景：</strong>给图片加扰动让多模态模型把"猫"识别成"汽车"；在图像中嵌入隐形指令绕过大模型安全护栏生成违规内容；构造恶意图文对误导多模态检索系统。<br>
+            <strong>创新优势：</strong>多模态大模型迭代快，新模型、新场景层出不穷，很容易找到新的攻击漏洞作为创新点，适合发高水平论文。
+          </div>
+        </div>
+
+        <div class="card" style="border-left:4px solid #f59e0b;">
+          <h4>③ 物理世界对抗<br><small>（竞赛落地神器）</small></h4>
+          <div class="meta">演示冲击力强 · 答辩加分</div>
+          <div class="desc">
+            <strong>核心理念：</strong>把对抗样本从数字世界搬到现实中，做成实体贴纸、衣物、标识，骗过真实场景的摄像头与AI系统。<br>
+            <strong>典型案例：</strong>对抗口罩骗过人脸识别、对抗路牌误导自动驾驶、对抗标签让安防系统误判。<br>
+            <strong>竞赛价值：</strong>演示效果极具冲击力，现场展示性极强，是挑战杯、互联网+、大创等竞赛拿高分的绝佳选题。
+          </div>
+        </div>
+
+        <div class="card" style="border-left:4px solid #d9304a;">
+          <h4>④ 大模型越狱攻防<br><small>（产业刚需）</small></h4>
+          <div class="meta">岗位缺口大 · 薪资溢价高</div>
+          <div class="desc">
+            <strong>核心内容：</strong>结合文本Prompt注入与多模态隐写，突破大模型的安全对齐机制；对应防御侧研究如何检测、拦截这类攻击。<br>
+            <strong>就业优势：</strong>所有做大模型的企业都需要这类安全人才，岗位缺口大、薪资溢价高。
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 三层级 · 八个课题 -->
+    <div class="sub-section">
+      <div class="sub-title">📋 三层级 · 八个具体科研课题</div>
+
+      <!-- 第一层级 -->
+      <div style="background:#f0fdfa; border:1px solid #99f6e4; border-radius:10px; padding:20px; margin-bottom:16px;">
+        <h4 style="color:#0d9488; margin-bottom:12px; font-size:1.05em;">🏗️ 第一层级：基础+跨模态（适合快速入门和发论文）</h4>
+
+        <!-- 课题A -->
+        <div class="info-grid" style="margin-bottom:14px;">
+          <div class="ilabel" style="background:#ccfbf1;">课题A</div>
+          <div class="ivalue"><strong>跨模态对抗迁移性研究</strong></div>
+          <div class="ilabel" style="background:#ccfbf1;">核心问题</div>
+          <div class="ivalue">在图像模态上生成的对抗扰动，能否在文本模态上产生一致的攻击效果？反之亦然。</div>
+          <div class="ilabel" style="background:#ccfbf1;">具体做法</div>
+          <div class="ivalue">研究如何生成一种"模态无关"的通用对抗扰动，可以同时欺骗图像编码器和文本编码器，使CLIP模型在图文检索或分类任务上同时出错。</div>
+          <div class="ilabel" style="background:#ccfbf1;">切入点</div>
+          <div class="ivalue">探究数据增强、集成模型等方法在提升跨模态黑盒攻击迁移性上的作用。</div>
+        </div>
+
+        <!-- 课题B -->
+        <div class="info-grid" style="margin-bottom:14px;">
+          <div class="ilabel" style="background:#ccfbf1;">课题B</div>
+          <div class="ivalue"><strong>高效率的CLIP视觉提示（Visual Prompting）攻击</strong></div>
+          <div class="ilabel" style="background:#ccfbf1;">核心问题</div>
+          <div class="ivalue">传统对抗攻击需要为每张图计算扰动。能否学到一种通用的、可打印的补丁（Patch），贴到任意图片上都能导致CLIP模型定向误判？</div>
+          <div class="ilabel" style="background:#ccfbf1;">优势</div>
+          <div class="ivalue">攻击效果好，故事性强，后续容易扩展到物理世界攻防。</div>
+        </div>
+
+        <!-- 课题C -->
+        <div class="info-grid" style="margin-bottom:0;">
+          <div class="ilabel" style="background:#ccfbf1;">课题C</div>
+          <div class="ivalue"><strong>对抗攻击下的Deepfake检测器失效分析</strong>（防御向）</div>
+          <div class="ilabel" style="background:#ccfbf1;">核心问题</div>
+          <div class="ivalue">以一款开源的伪造图文/视频检测模型为目标，设计专门的对抗样本绕过它的检测。反过来，研究用对抗训练的方法提升检测器的鲁棒性。</div>
+          <div class="ilabel" style="background:#ccfbf1;">创新点</div>
+          <div class="ivalue">不追求全局扰动，而是生成在视觉上不破坏伪造痕迹（如面部边缘不一致）的隐写式对抗噪声。</div>
+        </div>
+      </div>
+
+      <!-- 第二层级 -->
+      <div style="background:#fffbeb; border:1px solid #fde68a; border-radius:10px; padding:20px; margin-bottom:16px;">
+        <h4 style="color:#d97706; margin-bottom:12px; font-size:1.05em;">🎬 第二层级：物理世界攻击型（故事性强，成果直观）</h4>
+        <p style="font-size:0.9em; color:#5a6c7d; margin-bottom:14px;">这类课题强调算法落地，适合喜欢工程实现、想做出可展示成果的同学。</p>
+
+        <!-- 课题D -->
+        <div class="info-grid" style="margin-bottom:14px;">
+          <div class="ilabel" style="background:#fef3c7;">课题D</div>
+          <div class="ivalue"><strong>利用差分进化（Differential Evolution）的物理对抗样本生成</strong></div>
+          <div class="ilabel" style="background:#fef3c7;">场景</div>
+          <div class="ivalue">攻击"摄像头+激光雷达（LiDAR）"融合的3D目标检测模型（面向多模态自动驾驶系统）。</div>
+          <div class="ilabel" style="background:#fef3c7;">难点与思路</div>
+          <div class="ivalue">在数字世界中直接生成扰动，打印出来后放到物理世界就失效了。关键思路是引入<strong>EOT（期望变换）</strong>，模拟真实世界的光照、角度、距离变化，用差分进化这种黑盒优化算法，在真实车辆/路牌上部署对抗图案，使多模态检测器（如MVX-Net）漏检。</div>
+          <div class="ilabel" style="background:#fef3c7;">产出</div>
+          <div class="ivalue">可以做成一个完整的攻击框架。</div>
+        </div>
+
+        <!-- 课题E -->
+        <div class="info-grid" style="margin-bottom:0;">
+          <div class="ilabel" style="background:#fef3c7;">课题E</div>
+          <div class="ivalue"><strong>针对"视觉-语言-导航"（VLN）智能体的目标劫持攻击</strong></div>
+          <div class="ilabel" style="background:#fef3c7;">场景</div>
+          <div class="ivalue">用一个很小的对抗补丁贴在某物体上，改变机器人对其的语义理解。比如，一个"花瓶"被粘贴补丁后，被视觉语言模型理解成"出口"，导致导航智能体走入死胡同。</div>
+          <div class="ilabel" style="background:#fef3c7;">优势</div>
+          <div class="ivalue">非常前沿，涉及具身智能安全，竞争相对没有CLIP纯攻击那么激烈。</div>
+        </div>
+      </div>
+
+      <!-- 第三层级 -->
+      <div style="background:#f5f3ff; border:1px solid #ddd6fe; border-radius:10px; padding:20px; margin-bottom:0;">
+        <h4 style="color:#7c3aed; margin-bottom:12px; font-size:1.05em;">🚀 第三层级：前沿探索型（与大模型对齐，发论文潜力更大）</h4>
+        <p style="font-size:0.9em; color:#5a6c7d; margin-bottom:14px;">这类课题紧贴大语言模型/多模态大模型前沿，挑战也更大，适合有志于发顶会论文的同学。</p>
+
+        <!-- 课题F -->
+        <div class="info-grid" style="margin-bottom:14px;">
+          <div class="ilabel" style="background:#ede9fe;">课题F</div>
+          <div class="ivalue"><strong>多模态越狱的"安全开关"机理研究</strong></div>
+          <div class="ilabel" style="background:#ede9fe;">核心问题</div>
+          <div class="ivalue">当输入的图片+文本同时包含不安全内容时，大模型会优先听从哪个模态的指令？安全对齐机制是如何在两个模态间失衡的？</div>
+          <div class="ilabel" style="background:#ede9fe;">具体做法</div>
+          <div class="ivalue">设计一种攻击范式，例如：用"安全文本"包装"不安全图片"（如一张暴力图片配上详细论述该图片是虚构游戏场景的文字），系统性地探测多模态大模型（如LLaVA、MiniGPT-4）的内容审核边界。</div>
+          <div class="ilabel" style="background:#ede9fe;">特点</div>
+          <div class="ivalue">典型的研究型项目，实验设计是关键。</div>
+        </div>
+
+        <!-- 课题G -->
+        <div class="info-grid" style="margin-bottom:14px;">
+          <div class="ilabel" style="background:#ede9fe;">课题G</div>
+          <div class="ivalue"><strong>针对"图文交错"长上下文窗口的注意力攻击</strong></div>
+          <div class="ilabel" style="background:#ede9fe;">核心问题</div>
+          <div class="ivalue">当前多模态大模型的上下文窗口越来越长。如果在长文档/视频中，每隔N帧/页插入一个微小的、人类不可察觉的对抗性图像块，能否操控模型在最后时刻产生事实性错误或忘记系统指令？</div>
+          <div class="ilabel" style="background:#ede9fe;">创新点</div>
+          <div class="ivalue">这是对长上下文多模态大模型弱点的一次深度探查，非常有研究价值。</div>
+        </div>
+
+        <!-- 课题H -->
+        <div class="info-grid" style="margin-bottom:0;">
+          <div class="ilabel" style="background:#ede9fe;">课题H</div>
+          <div class="ivalue"><strong>模态间对齐程度如何影响对抗鲁棒性？</strong></div>
+          <div class="ilabel" style="background:#ede9fe;">核心假说</div>
+          <div class="ivalue">多模态模型被认为比单模态更鲁棒，但事实并非总是如此。</div>
+          <div class="ilabel" style="background:#ede9fe;">研究思路</div>
+          <div class="ivalue">自己训练或微调一批小型的、但不同模态间对齐程度（如对比学习中的温度系数不同）的CLIP模型，然后系统地评估它们在对抗攻击下的表现。</div>
+          <div class="ilabel" style="background:#ede9fe;">目标</div>
+          <div class="ivalue">找到"对齐程度"与"鲁棒性"之间的量化关系，比如是否过度对齐会导致新的脆弱性（对抗盲点）。非常适合做一篇扎实的本科毕业论文。</div>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="insight-box" style="margin-top:16px;">
+      <strong>💡 选题建议：</strong>大一同学可以从<strong>基础图像对抗（方向①）</strong>入手，快速跑通FGSM/PGD实验，建立对抗攻防的基本直觉；大二/大三同学建议直接从<strong>课题B（Visual Prompting攻击）</strong>或<strong>课题D（差分进化物理对抗）</strong>切入，既有故事性又不缺技术深度；有志于深造的同学可考虑<strong>课题G（长上下文注意力攻击）</strong>或<strong>课题H（对齐与鲁棒性）</strong>，方向前沿、竞争少，发顶会的空间很大。
+    </div>
+
+  </div>
+</div>
+
 <!-- ===== 五、四方向横向对比 ===== -->
 <div class="section s-purple">
   <div class="section-title">📊 五、四个细分方向横向对比总表</div>
@@ -597,7 +769,7 @@
           <strong>选择：</strong>细分④ <strong>大模型后门&训练投毒&可信对抗</strong><br><br>
           <strong>理由：</strong><br>
           • 技术深度最高，壁垒强，竞争者少<br>
-          • 与基础对抗样本攻防深度融合，可复用朱和贵老师方向积累<br>
+          • 与基础对抗样本攻防深度融合，可复用底层对抗攻防积累<br>
           • 成果可投顶会（CCS/USENIX/TIFS）<br>
           • 保研/读博竞争力断层领先<br>
           • ⚠️ 数学要求极高（★★★★★），适合有决心做深度研究的同学
